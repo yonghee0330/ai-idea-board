@@ -1,0 +1,2099 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI 서비스 레퍼런스 아이디어 보드</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#070b14;--surface:#0e1526;--surface-2:#141d33;--surface-3:#1b2742;
+  --border:#243153;--border-light:#34446e;
+  --text:#e6ebf5;--text-dim:#9aa6c4;--text-faint:#66739a;
+  --cyan:#22d3ee;--purple:#a78bfa;--green:#34d399;--pink:#f472b6;
+  --amber:#fbbf24;--blue:#60a5fa;--orange:#fb923c;--red:#f87171;
+}
+html{scroll-behavior:smooth}
+body{font-family:'Noto Sans KR',-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0;background:radial-gradient(ellipse 900px 700px at 8% -10%,rgba(34,211,238,.07),transparent),radial-gradient(ellipse 900px 700px at 95% 5%,rgba(167,139,250,.07),transparent);pointer-events:none;z-index:0}
+header,main,footer{position:relative;z-index:1}
+.hidden{display:none!important}
+
+/* HERO */
+.hero{max-width:1320px;margin:0 auto;padding:72px 24px 52px}
+.hero-label{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:3px;color:var(--cyan);margin-bottom:16px}
+.hero h1{font-size:clamp(32px,5vw,54px);font-weight:900;line-height:1.1;letter-spacing:-1.5px}
+.grad{background:linear-gradient(120deg,#22d3ee,#a78bfa 55%,#f472b6);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero-sub{margin-top:20px;max-width:760px;color:var(--text-dim);font-size:15px}
+.hero-stats{display:flex;gap:44px;margin-top:36px;flex-wrap:wrap}
+.stat{display:flex;flex-direction:column}
+.stat strong{font-size:28px;font-weight:900;font-family:'JetBrains Mono',ui-monospace,monospace;letter-spacing:-1px}
+.stat span{font-size:11px;color:var(--text-faint);letter-spacing:1.5px}
+
+/* FILTER BAR */
+.filterbar{position:sticky;top:0;z-index:50;background:rgba(7,11,20,.88);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-bottom:1px solid var(--border);padding:14px 24px}
+.filter-inner{max-width:1320px;margin:0 auto;display:flex;flex-direction:column;gap:10px}
+.filter-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.search-input{flex:1;min-width:220px;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:8px 14px;color:var(--text);font-size:13px;font-family:inherit;outline:none;transition:border-color .2s}
+.search-input:focus{border-color:var(--cyan)}
+.search-input::placeholder{color:var(--text-faint)}
+.chip-group{display:flex;gap:6px;flex-wrap:wrap}
+.chip{background:var(--surface);border:1px solid var(--border);color:var(--text-dim);padding:6px 12px;border-radius:20px;font-size:12px;cursor:pointer;transition:all .15s;font-family:inherit;white-space:nowrap}
+.chip:hover{border-color:var(--border-light);color:var(--text)}
+.chip.active{background:rgba(34,211,238,.12);border-color:var(--cyan);color:var(--cyan)}
+.chip.skill-filter.active{background:color-mix(in srgb,var(--sc) 14%,transparent);border-color:var(--sc);color:var(--sc)}
+.cat-select{background:var(--surface);border:1px solid var(--border);color:var(--text-dim);padding:6px 12px;border-radius:8px;font-size:12px;font-family:inherit;outline:none;cursor:pointer}
+.cat-select:focus{border-color:var(--cyan)}
+.result-count{margin-left:auto;font-family:'JetBrains Mono',ui-monospace,monospace;font-size:11px;color:var(--text-faint);white-space:nowrap}
+.view-toggle{display:flex;background:var(--surface);border:1px solid var(--border);border-radius:8px;overflow:hidden;flex-shrink:0}
+.view-toggle button{background:none;border:none;color:var(--text-dim);padding:7px 14px;font-size:12px;cursor:pointer;font-family:inherit}
+.view-toggle button.active{background:var(--surface-3);color:var(--cyan)}
+
+/* SECTIONS */
+.section{max-width:1320px;margin:0 auto;padding:60px 24px}
+.section-head{display:flex;align-items:flex-start;gap:20px;margin-bottom:32px}
+.section-num{font-family:'JetBrains Mono',ui-monospace,monospace;font-size:13px;color:var(--cyan);border:1px solid var(--border);padding:4px 10px;border-radius:6px;margin-top:4px;flex-shrink:0}
+.section-head h2{font-size:28px;font-weight:900;letter-spacing:-.5px}
+.section-head p{color:var(--text-dim);font-size:13.5px;margin-top:4px}
+
+/* SERVICE CARDS */
+.service-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:16px}
+.service-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px;position:relative;overflow:hidden;transition:transform .2s,border-color .2s,box-shadow .2s;animation:cardIn .3s ease both}
+.service-card::before{content:"";position:absolute;top:0;left:0;right:0;height:2px;background:var(--accent);opacity:.85}
+.service-card:hover{transform:translateY(-3px);border-color:var(--border-light);box-shadow:0 10px 28px rgba(0,0,0,.45)}
+@keyframes cardIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.card-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.region-badge{font-size:10px;font-weight:700;letter-spacing:1px;padding:3px 8px;border-radius:4px;color:var(--rc);background:color-mix(in srgb,var(--rc) 12%,transparent);border:1px solid color-mix(in srgb,var(--rc) 35%,transparent)}
+.cat-label{font-size:11px;color:var(--text-faint)}
+.service-card h3{font-size:16.5px;font-weight:700;margin-bottom:8px;line-height:1.3}
+.feature{font-size:12.5px;color:var(--text-dim);line-height:1.55;margin-bottom:12px;min-height:38px}
+.skill-row{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px}
+.skill-chip{background:color-mix(in srgb,var(--c) 12%,transparent);border:1px solid color-mix(in srgb,var(--c) 35%,transparent);color:var(--c);padding:3px 9px;border-radius:6px;font-size:10.5px;font-weight:500;white-space:nowrap;display:inline-block}
+.card-meta{border-top:1px dashed var(--border);padding-top:10px;display:flex;flex-direction:column;gap:6px}
+.meta-line{display:flex;gap:8px;font-size:11.5px;line-height:1.5}
+.meta-key{flex-shrink:0;color:var(--text-faint);font-family:'JetBrains Mono',ui-monospace,monospace;font-size:9.5px;padding-top:2px;letter-spacing:.5px;width:52px}
+.meta-val{color:var(--text-dim)}
+
+/* TABLE */
+.table-wrap{overflow-x:auto;border:1px solid var(--border);border-radius:12px}
+table{width:100%;border-collapse:collapse;font-size:12.5px;min-width:1150px}
+thead{background:var(--surface-2)}
+th{text-align:left;padding:12px 14px;font-weight:700;color:var(--text);border-bottom:1px solid var(--border);white-space:nowrap;font-size:11.5px;letter-spacing:.5px}
+td{padding:11px 14px;border-bottom:1px solid var(--border);vertical-align:top;color:var(--text-dim)}
+tbody tr:last-child td{border-bottom:none}
+tbody tr:hover td{background:rgba(255,255,255,.015)}
+td .skill-chip{margin:1px}
+.empty{text-align:center;padding:60px 20px;color:var(--text-faint);font-size:14px}
+
+/* ARCHETYPES */
+.archetype-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(370px,1fr));gap:16px}
+.archetype-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:22px;position:relative;overflow:hidden;transition:border-color .2s,transform .2s}
+.archetype-card::before{content:"";position:absolute;top:0;left:0;right:0;height:2px;background:var(--accent);opacity:.85}
+.archetype-card:hover{border-color:var(--border-light);transform:translateY(-2px)}
+.archetype-head{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.archetype-id{width:38px;height:38px;display:flex;align-items:center;justify-content:center;border-radius:9px;font-family:'JetBrains Mono',ui-monospace,monospace;font-weight:700;font-size:16px;color:var(--accent);background:color-mix(in srgb,var(--accent) 12%,transparent);border:1px solid color-mix(in srgb,var(--accent) 35%,transparent);flex-shrink:0}
+.archetype-card h3{font-size:16.5px;font-weight:700}
+.tagline{font-size:12px;color:var(--text-faint)}
+.arch-section{margin-top:14px}
+.arch-label{font-size:9.5px;font-family:'JetBrains Mono',ui-monospace,monospace;color:var(--text-faint);letter-spacing:1.2px;margin-bottom:7px}
+.arch-skills{display:flex;flex-wrap:wrap;gap:4px}
+.arch-list{list-style:none;display:flex;flex-direction:column;gap:3px}
+.arch-list li{font-size:12px;color:var(--text-dim);padding-left:14px;position:relative;line-height:1.55}
+.arch-list li::before{content:"▸";position:absolute;left:0;color:var(--accent);font-size:10px;top:1px}
+.arch-services{display:flex;flex-wrap:wrap;gap:4px}
+.arch-service-tag{font-size:11px;padding:2px 7px;background:var(--surface-2);border:1px solid var(--border);border-radius:4px;color:var(--text-dim);display:inline-block}
+.arch-footer{display:flex;justify-content:space-between;align-items:center;margin-top:14px;padding-top:12px;border-top:1px dashed var(--border)}
+.difficulty{font-size:11px;color:var(--text-faint)}
+.diff-badge{padding:2px 9px;border-radius:4px;font-size:10px;font-weight:700}
+.diff-상{background:rgba(248,113,113,.12);color:var(--red);border:1px solid rgba(248,113,113,.35)}
+.diff-중상{background:rgba(251,146,60,.12);color:var(--orange);border:1px solid rgba(251,146,60,.35)}
+.diff-중{background:rgba(251,191,36,.12);color:var(--amber);border:1px solid rgba(251,191,36,.35)}
+.diff-하{background:rgba(52,211,153,.12);color:var(--green);border:1px solid rgba(52,211,153,.35)}
+
+/* SKILL CATALOG */
+.skill-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:14px}
+.skill-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px;border-left:3px solid var(--accent)}
+.skill-card h3{font-size:14.5px;font-weight:700;color:var(--accent);margin-bottom:10px}
+.sc-row{font-size:12px;color:var(--text-dim);margin-bottom:9px;line-height:1.55}
+.sc-label{font-family:'JetBrains Mono',ui-monospace,monospace;font-size:9px;letter-spacing:1.2px;color:var(--text-faint);display:block;margin-bottom:3px}
+
+/* IDEA BOARD */
+.builder-card{background:linear-gradient(135deg,var(--surface-2),var(--surface));border:1px solid var(--border-light);border-radius:16px;padding:28px;margin-bottom:32px}
+.builder-title{font-size:18px;font-weight:700;margin-bottom:4px}
+.builder-sub{font-size:13px;color:var(--text-dim);margin-bottom:20px}
+.builder-skills{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px}
+.builder-skill-btn{background:var(--surface);border:1px solid var(--border);color:var(--text-dim);padding:8px 14px;border-radius:8px;font-size:12.5px;cursor:pointer;transition:all .15s;font-family:inherit;display:flex;align-items:center;gap:7px}
+.builder-skill-btn .dot{width:7px;height:7px;border-radius:50%;background:var(--c);flex-shrink:0}
+.builder-skill-btn.active{background:color-mix(in srgb,var(--c) 14%,transparent);border-color:var(--c);color:var(--c)}
+.builder-result{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:18px;min-height:80px}
+.builder-result h4{font-size:10px;color:var(--text-faint);font-family:'JetBrains Mono',ui-monospace,monospace;letter-spacing:1.2px;margin-bottom:10px;font-weight:400}
+.idea-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(350px,1fr));gap:16px}
+.idea-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:22px;position:relative;overflow:hidden;transition:border-color .2s,transform .2s}
+.idea-card::before{content:"";position:absolute;top:0;left:0;bottom:0;width:3px;background:var(--accent)}
+.idea-card:hover{border-color:var(--border-light);transform:translateY(-2px)}
+.idea-num{font-family:'JetBrains Mono',ui-monospace,monospace;font-size:10.5px;color:var(--accent);letter-spacing:1.2px;margin-bottom:8px}
+.idea-card h3{font-size:16.5px;font-weight:700;margin-bottom:8px}
+.idea-desc{font-size:12.5px;color:var(--text-dim);margin-bottom:16px;line-height:1.65}
+.idea-meta{display:flex;flex-direction:column;gap:9px;font-size:11.5px}
+.idea-meta-row{display:flex;gap:9px}
+.idea-meta-key{color:var(--text-faint);font-family:'JetBrains Mono',ui-monospace,monospace;font-size:9px;flex-shrink:0;padding-top:3px;letter-spacing:.8px;width:50px}
+
+/* GUIDE */
+.guide-list{display:flex;flex-direction:column;gap:12px;margin-top:28px}
+.guide-item{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:18px 20px;display:flex;gap:16px}
+.guide-num{font-family:'JetBrains Mono',ui-monospace,monospace;font-size:19px;font-weight:700;color:var(--cyan);flex-shrink:0;width:28px;line-height:1.3}
+.guide-item p{font-size:13px;color:var(--text-dim);line-height:1.7}
+.guide-item strong{color:var(--text)}
+
+/* FOOTER */
+footer{border-top:1px solid var(--border);padding:40px 24px;text-align:center;color:var(--text-faint);font-size:11.5px;max-width:1320px;margin:40px auto 0;line-height:1.8}
+footer strong{color:var(--text-dim)}
+
+/* RESPONSIVE */
+@media(max-width:768px){
+  .hero{padding:48px 16px 36px}
+  .hero-stats{gap:24px}
+  .section{padding:40px 16px}
+  .filterbar{padding:10px 16px}
+  .search-input{min-width:100%;order:10}
+  .service-grid,.archetype-grid,.skill-grid,.idea-grid{grid-template-columns:1fr}
+  .section-head{gap:12px}
+  .section-head h2{font-size:22px}
+  .result-count{margin-left:0;order:11}
+  .builder-card{padding:20px}
+}
+
+.notice{margin-top:24px;padding:16px 20px;border:1px solid var(--border-light);border-radius:10px;color:var(--text-dim);font-size:12px;max-width:900px}.notice strong{color:var(--amber)}
+.jump-links{display:flex;gap:20px;flex-wrap:wrap;margin-top:24px}.jump-links a{color:var(--cyan);font-size:13px;text-decoration:none}
+:root{--text-faint:#93a2c5}section{scroll-margin-top:190px}button:focus-visible,a:focus-visible,select:focus-visible{outline:2px solid var(--cyan);outline-offset:4px}
+@media(max-width:768px){.filterbar{position:relative}.search-input{min-width:0;width:100%;flex-basis:100%}.chip{padding:8px 10px}.section{scroll-margin-top:16px}.hero-stats{gap:20px}.meta-val{overflow-wrap:anywhere}.idea-meta-row>div{min-width:0}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+
+.service-name-link{color:var(--text);text-decoration:none}.service-name-link:hover{color:var(--cyan);text-decoration:underline}.service-name-link span{color:var(--cyan);font-size:.8em}
+.service-website{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;margin:8px 0 14px}.service-link{display:inline-flex;gap:6px;align-items:center;color:var(--cyan);background:rgba(34,211,238,.08);border:1px solid var(--border-light);border-radius:6px;padding:5px 9px;font-size:11px;text-decoration:none}.service-link:hover{background:rgba(34,211,238,.18);border-color:var(--cyan)}.link-domain{font-size:10px;color:var(--text-faint);overflow-wrap:anywhere}.link-note{flex-basis:100%;font-size:11px;color:var(--text-dim);line-height:1.5}.reference-link{text-decoration:none}.reference-link:hover{border-color:var(--cyan);color:var(--cyan)}td:first-child{min-width:210px}td .service-website{margin-bottom:0}
+
+.new-badge{display:inline-block;color:#06291d;background:#65e4ae;border-radius:4px;padding:3px 7px;font-size:10px;font-weight:800;letter-spacing:.05em;margin-right:7px}.new-details{font-size:11px;line-height:1.7;color:var(--text-dim);margin:8px 0 12px}.new-details strong{color:#b5f6d8;font-weight:600}.status-tag{display:inline-block;border:1px solid #37514e;border-radius:4px;padding:1px 6px;margin-top:4px;color:#b5f6d8}.evidence{margin-top:14px;border-top:1px solid var(--border);padding-top:10px;font-size:11px;line-height:1.7}.evidence summary{cursor:pointer;color:var(--cyan)}.evidence a{display:block;color:var(--text-dim);text-decoration:none;padding:5px 0;overflow-wrap:anywhere}.evidence a:hover{color:var(--cyan);text-decoration:underline}.cohort-label,.research-date{font-size:11px;color:var(--text-dim)}#cohortChips .active{background:#173e33;border-color:#65e4ae;color:#b5f6d8}.card-top{flex-wrap:wrap;gap:7px}.service-card h3{line-height:1.5}.new-company{font-size:11px;color:var(--text-dim);margin-top:-3px}td .evidence{min-width:220px}.research-date{margin-left:auto}@media(max-width:700px){.research-date{margin-left:0}.filterbar{position:static}.cohort-label{width:100%}}
+</style>
+</head>
+<body>
+<noscript>이 보드는 JavaScript를 허용한 브라우저에서 열어주세요.</noscript>
+
+<header class="hero">
+  <div class="hero-label">AI PRODUCT REFERENCE BOARD</div>
+  <h1>AI 서비스 레퍼런스<br><span class="grad">아이디어 보드</span></h1>
+  <p class="hero-sub">기존 레퍼런스 52개에 2026년 NEW 서비스 40개를 더했습니다. 국내 20개 · 해외 20개를 발표 시점과 출처로 살펴보고, 기술 스킬과 구현 아이디어로 연결하세요.</p>
+  <div class="notice"><strong>2026 NEW 리서치 · 2026.10.28 확인</strong><br>NEW는 2026년 공개·출시된 서비스, 별도 제품, 신규 AI 기능·앱을 모은 조사 묶음입니다. 신생 기업만의 목록이나 인기 순위는 아닙니다. 매체 보도·커뮤니티 언급을 수집했으며, 회사 배포 자료는 구분했습니다. 날짜는 각 항목의 공개 유형과 함께 읽어주세요. 이용 상태는 확인한 자료 기준이며 직접 사용 평가는 아닙니다.<br>기존 52개는 딥시크 원문의 미검증 특징·성과를 유지했습니다. 기존 지역은 시장 분류, NEW 국내/해외는 운영사·창업 배경 기준입니다. 모든 스킬 분류·구현 방식은 기획용 해석과 가설입니다. 이 파일은 자동 갱신되지 않습니다.</div>
+  <div class="jump-links"><a href="#catalog">서비스 탐색 ↗</a><a href="#archetypes">6개 아키타입 ↗</a><a href="#skills">스킬 레퍼런스 ↗</a><a href="#ideaboard">아이디어 조합 ↗</a></div>
+  <div class="hero-stats">
+    <div class="stat"><strong id="statServices">52</strong><span>SERVICES</span></div>
+    <div class="stat"><strong>40</strong><span>NEW IN 2026</span></div>
+    <div class="stat"><strong>11</strong><span>CATEGORIES</span></div>
+    <div class="stat"><strong>8</strong><span>SKILLS</span></div>
+    <div class="stat"><strong>6</strong><span>ARCHETYPES</span></div>
+  </div>
+</header>
+
+<nav class="filterbar">
+  <div class="filter-inner">
+    <div class="filter-row"><span class="cohort-label">수집 구분</span><div class="chip-group" id="cohortChips"></div><span class="research-date">확인 2026.10.28 · NEW 최신 공개순</span></div>
+    <div class="filter-row">
+      <input aria-label="서비스 검색" type="search" id="searchInput" class="search-input" placeholder="서비스 · 업체 · 특징 · 발표 시점 검색...">
+      <div class="chip-group" id="regionChips"></div>
+      <div class="view-toggle">
+        <button data-view="card" class="active">카드</button>
+        <button data-view="table">표</button>
+      </div>
+    </div>
+    <div class="filter-row">
+      <select aria-label="카테고리 필터" id="categorySelect" class="cat-select"></select>
+      <div class="chip-group" id="skillChips"></div>
+      <button class="chip" id="resetFilters">필터 초기화</button><button class="chip" id="exportCsv">현재 결과 CSV ↓</button><span class="result-count" id="resultCount" aria-live="polite"></span>
+    </div>
+  </div>
+</nav>
+
+<main>
+  <section class="section" id="catalog">
+    <div class="section-head">
+      <div class="section-num">01</div>
+      <div>
+        <h2>서비스 카탈로그</h2>
+        <p>NEW 40개를 먼저 표시합니다. 수집 구분·지역·업종·스킬을 조합해 비교하세요. 여러 스킬은 모두 포함(AND) 조건입니다. 서비스와 출처 링크는 새 탭으로 열립니다. 구현 가설은 실제 내부 기술 스택을 확정한 내용이 아닙니다.</p>
+      </div>
+    </div>
+    <div id="serviceGrid" class="service-grid"></div>
+    <div id="serviceTableWrap" class="table-wrap hidden">
+      <table>
+        <thead>
+          <tr>
+            <th>서비스</th><th>지역 분류</th><th>카테고리</th><th>특징</th><th>스킬 스택</th><th>구현 가설</th><th>주목 근거 / 기존 성과 주장</th>
+          </tr>
+        </thead>
+        <tbody id="serviceTableBody"></tbody>
+      </table>
+    </div>
+    <div id="emptyState" class="empty hidden">조건에 맞는 서비스가 없습니다. 필터를 조정해 보세요.</div>
+  </section>
+
+  <section class="section" id="archetypes">
+    <div class="section-head">
+      <div class="section-num">02</div>
+      <div>
+        <h2>서비스 아키타입</h2>
+        <p>자주 등장하는 스킬 조합을 6개 유형으로 정리했습니다. 신규 서비스의 뼈대를 고르는 데 사용하세요.</p>
+      </div>
+    </div>
+    <div id="archetypeGrid" class="archetype-grid"></div>
+  </section>
+
+  <section class="section" id="skills">
+    <div class="section-head">
+      <div class="section-num">03</div>
+      <div>
+        <h2>스킬 레퍼런스 카탈로그</h2>
+        <p>8개 기술 스킬의 구현 방식·최소 스택·참조 서비스·프로토타입 난이도.</p>
+      </div>
+    </div>
+    <div id="skillGrid" class="skill-grid"></div>
+  </section>
+
+  <section class="section" id="ideaboard">
+    <div class="section-head">
+      <div class="section-num">04</div>
+      <div>
+        <h2>아이디어 보드</h2>
+        <p>스킬을 조합해 보거나, 신규 서비스 아이디어 초안 5종을 참조하세요.</p>
+      </div>
+    </div>
+
+    <div class="builder-card">
+      <div class="builder-title">🧩 스킬 조합 빌더</div>
+      <div class="builder-sub">8개 스킬 중 원하는 것을 선택하면, 해당 스킬을 모두 갖춘 서비스와 가장 가까운 아키타입을 추천합니다.</div>
+      <div class="builder-skills" id="builderSkills"></div>
+      <div class="builder-result" id="builderResult">
+        <div style="color:var(--text-faint);font-size:13px">스킬을 선택하면 매칭되는 서비스와 아키타입을 추천합니다.</div>
+      </div>
+    </div>
+
+    <div class="idea-grid" id="ideaGrid"></div>
+
+    <div class="guide-list">
+      <div class="guide-item"><div class="guide-num">01</div><p><strong>해결할 문제부터 고르세요.</strong> 문서 검색, 콘텐츠 제작, 개인화 코칭, 업무 실행 등 목표에 맞춰 아키타입을 선택하세요.</p></div>
+      <div class="guide-item"><div class="guide-num">02</div><p><strong>구현 가설을 작은 실험으로 검증하세요.</strong> 원문의 스택은 해당 기업의 실제 내부 기술을 보증하지 않습니다. 한 가지 입력과 한 가지 결과물로 MVP를 좁히세요.</p></div>
+      <div class="guide-item"><div class="guide-num">03</div><p><strong>성과 수치는 출처 확인 후 활용하세요.</strong> 순위·사용자 수·매출은 비교 기간과 측정 기준이 필요합니다. 원문의 전체 서비스에 가드레일이 있다는 주장도 스킬 데이터와 일치하지 않아 제외했습니다.</p></div>
+    </div>
+  </section>
+</main>
+
+<footer><strong>AI 서비스 레퍼런스 아이디어 보드</strong> · 92개 레퍼런스 / NEW 국내 20 · 해외 20<br>NEW 조사일 2026.10.28 · 출처는 각 항목에서 확인 · 기존 52개는 제공된 딥시크 자료 기반 · 구현·스킬은 기획 참고용 가설<br>검색·필터는 오프라인에서 동작하며 서비스·기사 링크 접속에는 인터넷이 필요합니다.</footer>
+
+<script>
+/* ============ CONSTANTS ============ */
+const REGIONS = ["전체","국내","중국","일본","동남아","글로벌"];
+const REGION_COLORS = {"국내":"#22d3ee","중국":"#ef4444","일본":"#f472b6","동남아":"#fbbf24","글로벌":"#a78bfa"};
+const SKILL_COLORS = {
+  "LLM-대화":"#22d3ee","RAG-검색":"#a78bfa","에이전트-오케스트레이션":"#34d399",
+  "멀티모달-생성":"#f472b6","멀티모달-이해":"#fbbf24","개인화-프로파일링":"#60a5fa",
+  "자동화-파이프라인":"#fb923c","평가-가드레일":"#f87171"
+};
+const SKILLS = Object.keys(SKILL_COLORS);
+const CATEGORIES = ["전체","생산성/오피스","교육/학습","헬스케어/웰니스","금융/핀테크","커머스/쇼핑","콘텐츠 생성","고객서비스/챗봇","개발/코딩","법률/전문직","엔터테인먼트/소셜","보안/AI 인프라"];
+
+/* ============ SERVICES DATA ============ */
+const originalServices = [
+  // ---------- 국내 ----------
+  {name:"스픽 (Speak)",url:"https://www.speak.com/",linkLabel:"공식 사이트",linkNote:"",region:"국내",category:"교육/학습",feature:"AI 영어 튜터 — 실시간 발음·문법 교정, 롤플레이 회화",skills:["LLM-대화","멀티모달-이해","개인화-프로파일링","평가-가드레일"],impl:"음성 STT + 발음 평가 모델 + LLM 롤플레이 + CEFR 기반 난이도 조정",metric:"시리즈 C 7,800만 달러 · 기업가치 10억 달러"},
+  {name:"리드레이 (Readray)",url:"https://readray.ai/ko",linkLabel:"공식 사이트",linkNote:"",region:"국내",category:"생산성/오피스",feature:"문서·웹페이지 요약 및 문서 기반 Q&A 리서치 어시스턴트",skills:["RAG-검색","LLM-대화","자동화-파이프라인","평가-가드레일"],impl:"문서 파싱 → 청킹·임베딩 → pgvector 검색 → LLM 요약·Q&A",metric:"국내 AI 요약 SimilarWeb 1위 · 누적 리포트 900만 건"},
+  {name:"필라이즈 (Pillyze)",url:"https://www.pillyze.com/",linkLabel:"공식 사이트",linkNote:"",region:"국내",category:"헬스케어/웰니스",feature:"음식 사진으로 칼로리 분석 + 맞춤 다이어트 코칭",skills:["멀티모달-이해","LLM-대화","개인화-프로파일링","평가-가드레일"],impl:"음식 이미지 인식 + 라이프로그 수집 + LLM 코칭 + 의료법 가드레일",metric:"앱스토어 건강/피트니스 1위 · 유료 구독 3배 · AI 상담 140만 건"},
+  {name:"네이버웍스 (NAVER WORKS)",url:"https://naver.worksmobile.com/",linkLabel:"공식 사이트",linkNote:"",region:"국내",category:"생산성/오피스",feature:"메신저·메일·드라이브 통합 + AI 회의록·문서 검색",skills:["LLM-대화","RAG-검색","자동화-파이프라인","평가-가드레일"],impl:"사내 문서 RAG + 회의 음성 요약 + 권한 기반 접근 제어",metric:"국내 협업툴 9개월 연속 1위 · 공공 18개 부처 도입"},
+  {name:"NHN두레이 (Dooray)",url:"https://dooray.com/main/",linkLabel:"공식 사이트",linkNote:"",region:"국내",category:"생산성/오피스",feature:"공공 특화 협업툴 + AI 에이전트 4종",skills:["LLM-대화","에이전트-오케스트레이션","RAG-검색","평가-가드레일"],impl:"4종 AI 에이전트 + 사내 위키 RAG + 공공 보안(CSAP) 준수",metric:"공공 협업툴 계약 점유율 49%(건수)·68%(금액) 1위"},
+  {name:"로앤컴퍼니 슈퍼로이어",url:"https://superlawyer.co.kr/",linkLabel:"공식 사이트",linkNote:"",region:"국내",category:"법률/전문직",feature:"판례 534만 건 RAG + 법률 문서 생성·검토",skills:["RAG-검색","LLM-대화","멀티모달-이해","평가-가드레일"],impl:"판례·법령 벡터 검색 + 문서 생성 + 인용 검증 가드레일",metric:"변호사시험 선택형 100% · 변호사 6,000명+ · 결제 유지율 79.1%"},
+  {name:"채널톡 ALF",url:"https://channel.io/us/alf-customer",linkLabel:"공식 사이트",linkNote:"",region:"국내",category:"고객서비스/챗봇",feature:"커머스 문의 자동 분류·응답 + 배송·환불 처리",skills:["LLM-대화","에이전트-오케스트레이션","RAG-검색","평가-가드레일"],impl:"커머스 백엔드 API 툴 호출 + FAQ RAG + 에스컬레이션 판단",metric:"이커머스 문의 해결률 80.1% · 반품·예약 자동화"},
+  {name:"툰스퀘어 (ToonSquare)",url:"https://toonsquare.co/",linkLabel:"공식 사이트",linkNote:"",region:"국내",category:"콘텐츠 생성",feature:"스토리 → 3D → 웹툰 컷 자동 생성 파이프라인",skills:["LLM-대화","멀티모달-생성","자동화-파이프라인","평가-가드레일"],impl:"스토리 각색 LLM + 3D 캐릭터 렌더링 + 이미지 생성(투닝 플러스)",metric:"웹툰 반복 작업 80%+ 단축 · 초격차 스타트업 선정"},
+  {name:"카카오헬스케어 파스타",url:"https://pastahealth.com/",linkLabel:"공식 사이트",linkNote:"파스타 공식 사이트·스토어",region:"국내",category:"헬스케어/웰니스",feature:"CGM 연동 AI 혈당 관리·식습관 코칭",skills:["멀티모달-이해","LLM-대화","개인화-프로파일링","평가-가드레일"],impl:"연속혈당측정기(CGM) 데이터 + AI 식단 분석 + 혈당 예측",metric:"출시 3개월 iOS 건강/피트니스 1위 · 노보 노디스크 협력"},
+  {name:"카카오페이 페이아이",url:"https://www.kakaopay.com/",linkLabel:"운영사 사이트",linkNote:"카카오페이 앱 내 서비스",region:"국내",category:"금융/핀테크",feature:"생성형 AI 결제 에이전트 — 카드 혜택·멤버십 분석",skills:["LLM-대화","에이전트-오케스트레이션","RAG-검색","평가-가드레일"],impl:"결제 의도 분석 + 혜택 RAG + 결제 API 툴 호출",metric:"출시 후 월간 UV 11.7배 증가"},
+  {name:"뤼튼 (Wrtn)",url:"https://wrtn.ai/",linkLabel:"공식 사이트",linkNote:"",region:"국내",category:"콘텐츠 생성",feature:"LLM 글쓰기 + 이미지 생성 + 콘텐츠 자동화",skills:["LLM-대화","RAG-검색","멀티모달-생성","자동화-파이프라인"],impl:"멀티 LLM 라우팅 + 프롬프트 템플릿 + 이미지 생성 API",metric:"국내 최다 유저 보유 AI 플랫폼(자체 집계) · '한국형 ChatGPT'"},
+  {name:"에이블리 (Ably)",url:"https://mobile.a-bly.com/",linkLabel:"공식 사이트",linkNote:"",region:"국내",category:"커머스/쇼핑",feature:"취향 빅데이터 기반 AI 개인화 추천",skills:["개인화-프로파일링","LLM-대화"],impl:"사용자 행동 로그 임베딩 + 취향 벡터 + 실시간 추천 랭킹",metric:"버티컬 커머스 MAU 998만 1위 · 월 사용자 1,000만 돌파"},
+  {name:"뤼이드 산타 (Riiid Santa)",url:"https://support.riiid.co/hc/ko",linkLabel:"공식 고객센터",linkNote:"산타 서비스 안내·이용 방법",region:"국내",category:"교육/학습",feature:"AI 토익 튜터 — 점수 예측·맞춤 문제 추천",skills:["LLM-대화","개인화-프로파일링","평가-가드레일"],impl:"딥러닝 점수 예측 + 문제 추천 + LLM 해설",metric:"2024 매출 201억 원(+161%) · 글로벌 누적 487만 명"},
+
+  // ---------- 중국 ----------
+  {name:"Tencent WorkBuddy",url:"https://www.workbuddy.ai/",linkLabel:"공식 사이트",linkNote:"",region:"중국",category:"생산성/오피스",feature:"전장면 AI 오피스 워크벤치·에이전트",skills:["LLM-대화","에이전트-오케스트레이션","RAG-검색"],impl:"오피스 에이전트 + 문서 RAG + 워크플로 자동화",metric:"MAU 3,235만 · 월간 방문 8,534만 (2위의 약 2배)"},
+  {name:"豆包 (Doubao)",url:"https://www.doubao.com/",linkLabel:"공식 사이트",linkNote:"",region:"중국",category:"커머스/쇼핑",feature:"AI 쇼핑 클로즈드루프 — 상품 추천·비교",skills:["LLM-대화","개인화-프로파일링","멀티모달-이해"],impl:"슈퍼앱 AI 어시스턴트 + 쇼핑 생태계 연동",metric:"MAU 3.45억 · AI 앱 전체 1위"},
+  {name:"千问 (Qwen)",url:"https://www.qianwen.com/",linkLabel:"공식 사이트",linkNote:"",region:"중국",category:"커머스/쇼핑",feature:"타오바오 통합 AI 쇼핑 세션",skills:["LLM-대화","에이전트-오케스트레이션","개인화-프로파일링"],impl:"Qwen 모델 + 타오바오 상품 DB + 대화형 쇼핑",metric:"MAU 1.66억 · 설 연휴 AI 쇼핑 세션 1.4억 회"},
+  {name:"支付宝 AI付",url:"https://www.alipay.com/",linkLabel:"운영사 사이트",linkNote:"알리페이 앱 내 기능",region:"중국",category:"금융/핀테크",feature:"AI 네이티브 결제 — 사용자 의도 기반 결제",skills:["LLM-대화","에이전트-오케스트레이션","평가-가드레일"],impl:"결제 의도 분석 + 결제 API + 이상거래 탐지",metric:"사용자 1억 명 돌파 · 세계 최초 결제 건수·사용자 동시 1억"},
+  {name:"蚂蚁阿福 (Ant Afu / AQ)",url:"https://www.antgroup.com/news-media/press-releases/1765785600000",linkLabel:"공식 소개",linkNote:"Ant Group의 아푸 서비스 소개",region:"중국",category:"헬스케어/웰니스",feature:"AI 건강 버틀러 — 증상 상담·건강 관리",skills:["LLM-대화","RAG-검색","개인화-프로파일링","평가-가드레일"],impl:"의학 지식 RAG + 건강 프로필 + 응급 에스컬레이션",metric:"MAU 3,000만 · 누적 1.5억 · 일일 상담 2,000만 건"},
+  {name:"作业帮",url:"https://www.zybang.com/",linkLabel:"공식 사이트",linkNote:"",region:"중국",category:"교육/학습",feature:"AI 문제 풀이·검색·튜터링",skills:["LLM-대화","RAG-검색","멀티모달-이해"],impl:"문제 OCR + 문제-풀이 DB 검색 + LLM 설명",metric:"MAU 1.7억 · 중국 교육 앱 1위"},
+  {name:"Gauth (바이트댄스)",url:"https://www.gauthmath.com/",linkLabel:"공식 사이트",linkNote:"",region:"중국",category:"교육/학습",feature:"문제 사진 → 단계별 풀이",skills:["멀티모달-이해","LLM-대화","RAG-검색","평가-가드레일"],impl:"수식 OCR + 유사 문제 DB + 단계별 풀이 생성",metric:"글로벌 설치 2억 회 · MAU 5,341만 · 월수류 122만 달러"},
+  {name:"Vidu (生数科技)",url:"https://www.vidu.com/",linkLabel:"공식 사이트",linkNote:"",region:"중국",category:"콘텐츠 생성",feature:"멀티모달 영상 생성 (Vidu Q3)",skills:["멀티모달-생성","자동화-파이프라인"],impl:"확산 트랜스포머 기반 영상 생성 + 배치 파이프라인",metric:"Artificial Analysis 중국 1위·글로벌 2위"},
+  {name:"Qoder (알리바바)",url:"https://qoder.com/",linkLabel:"공식 사이트",linkNote:"",region:"중국",category:"개발/코딩",feature:"AI 코딩 IDE — 에이전트 기반 개발",skills:["LLM-대화","에이전트-오케스트레이션","RAG-검색"],impl:"코드베이스 임베딩 + 에이전트 리팩토링 + 샌드박스 실행",metric:"중국 AI 코딩 시장 점유율 47.6% 1위"},
+  {name:"同花顺",url:"https://www.10jqka.com.cn/",linkLabel:"공식 사이트",linkNote:"",region:"중국",category:"금융/핀테크",feature:"AI 금융 오픈플랫폼·투자 어시스턴트",skills:["RAG-검색","LLM-대화","개인화-프로파일링"],impl:"금융 데이터 RAG + AI 투자 어시스턴트 + 오픈 API",metric:"AI 오픈플랫폼 저작권 449개 · 90%+ 증권사 커버"},
+
+  // ---------- 일본 ----------
+  {name:"zeta (ScatterLab)",url:"https://zeta-ai.io/",linkLabel:"공식 사이트",linkNote:"",region:"일본",category:"엔터테인먼트/소셜",feature:"AI 캐릭터 채팅·AI 네이티브 소셜",skills:["LLM-대화","개인화-프로파일링","멀티모달-생성","평가-가드레일"],impl:"페르소나 LLM + 장기 메모리 + 소셜 피드 생성 + 안전 필터",metric:"일본 엔터 앱 사용시간 1위(Netflix 추월) · 월매출 약 800만 달러"},
+  {name:"FiNC",url:"https://finc.com/",linkLabel:"공식 사이트",linkNote:"",region:"일본",category:"헬스케어/웰니스",feature:"AI 퍼스널 트레이너 — 체중·식사·수면·운동 추적",skills:["개인화-프로파일링","LLM-대화","멀티모달-이해"],impl:"라이프로그 수집 + AI 트레이너 + 행동 변화 넛지",metric:"일본 1위 AI 헬스 앱 · 다운로드 1,100만+ · 누적 투자 1.17억 달러"},
+  {name:"あすけん",url:"https://www.asken.jp/",linkLabel:"공식 사이트",linkNote:"",region:"일본",category:"헬스케어/웰니스",feature:"AI 식사 관리·영양 코칭",skills:["멀티모달-이해","개인화-프로파일링","LLM-대화"],impl:"식사 사진 인식 + 영양 DB + AI 영양사 코칭",metric:"다운로드·매출·AU 국내 1위"},
+  {name:"Ubie",url:"https://ubie.app/",linkLabel:"공식 사이트",linkNote:"",region:"일본",category:"헬스케어/웰니스",feature:"AI 증상 검색·의료기관 매칭",skills:["RAG-검색","LLM-대화","멀티모달-이해"],impl:"의학 지식 RAG + 증상 질문 트리 + 병원 매칭",metric:"월 1,300만 명 이용 · 1,800+ 의료기관 도입"},
+  {name:"WealthNavi",url:"https://www.wealthnavi.com/",linkLabel:"공식 사이트",linkNote:"",region:"일본",category:"금융/핀테크",feature:"AI 로보어드바이저 — 자동 분산투자",skills:["개인화-프로파일링","평가-가드레일"],impl:"리스크 프로파일링 + 자동 리밸런싱 + 규제 가드레일",metric:"예탁자산 1조 9,000억 엔 · 로보어드바이저 국내 1위"},
+  {name:"楽天 (Rakuten)",url:"https://www.rakuten.co.jp/",linkLabel:"공식 사이트",linkNote:"",region:"일본",category:"커머스/쇼핑",feature:"AI 점장·에이전트 커머스 (Rakuten AI 3.0)",skills:["개인화-프로파일링","LLM-대화","에이전트-오케스트레이션"],impl:"자체 LLM 700B MoE + 에코시스템 데이터 + AI 점장",metric:"AI 도입 후 평균 주문액 약 26% 향상"},
+  {name:"CapCut",url:"https://www.capcut.com/",linkLabel:"공식 사이트",linkNote:"",region:"일본",category:"콘텐츠 생성",feature:"AI 영상 편집·생성",skills:["멀티모달-생성","자동화-파이프라인","멀티모달-이해"],impl:"영상 편집 AI + 자동 자막 + 템플릿 파이프라인",metric:"일본 AI 영상 생성 부문 1위"},
+  {name:"PKSHA ChatAgent",url:"https://aisaas.pkshatech.com/chatbot/",linkLabel:"공식 사이트",linkNote:"",region:"일본",category:"고객서비스/챗봇",feature:"자연어처리·ML 기반 AI 챗봇",skills:["LLM-대화","RAG-검색","에이전트-오케스트레이션"],impl:"NLU + 사내 지식 RAG + 시나리오 에이전트",metric:"일본 AI 챗봇 국내 점유율 1위"},
+  {name:"Legalscape",url:"https://www.legalscape.jp/",linkLabel:"공식 사이트",linkNote:"",region:"일본",category:"법률/전문직",feature:"AI 법률 리서치 — 판례·법령 검색",skills:["RAG-검색","LLM-대화","평가-가드레일"],impl:"법률 서적·판례 임베딩 + 리랭킹 + 인용 검증",metric:"일본 법률 리서치 AI 1위 · 수록 서적 수 업계 1위"},
+  {name:"LegalOn",url:"https://www.legalontech.com/",linkLabel:"공식 사이트",linkNote:"",region:"일본",category:"법률/전문직",feature:"AI 계약서 리뷰·관리",skills:["RAG-검색","LLM-대화","평가-가드레일"],impl:"계약서 유형별 체크리스트 RAG + 조항 리스크 플래깅",metric:"일본 AI 계약서 리뷰 대표 플랫폼"},
+  {name:"Claude Code",url:"https://claude.com/product/claude-code",linkLabel:"공식 사이트",linkNote:"",region:"일본",category:"개발/코딩",feature:"에이전트 기반 코딩 — 터미널 통합",skills:["LLM-대화","에이전트-오케스트레이션","RAG-검색","평가-가드레일"],impl:"Claude + 툴 호출 + 코드베이스 검색 + 테스트 실행",metric:"일본 엔지니어 유료 사용 1위(49.0%)"},
+
+  // ---------- 동남아 ----------
+  {name:"Shopee",url:"https://shopee.sg/",linkLabel:"공식 사이트",linkNote:"Shopee 싱가포르 사이트",region:"동남아",category:"커머스/쇼핑",feature:"AI 스마트 가이드·개인화 추천·라이브 커머스 AI",skills:["개인화-프로파일링","LLM-대화","에이전트-오케스트레이션"],impl:"행동 로그 임베딩 + AI 스마트 가이드 + 라이브 커머스",metric:"GMV 약 832억 달러 1위 · AI 스마트 가이드 누적 1억 명 육박"},
+  {name:"GCash (Mynt)",url:"https://gcash.com/",linkLabel:"공식 사이트",linkNote:"",region:"동남아",category:"금융/핀테크",feature:"AI 신용평가·사기탐지 디지털 월렛",skills:["개인화-프로파일링","평가-가드레일"],impl:"대안 데이터 신용평가 + ML 사기탐지",metric:"필리핀 디지털 월렛 1위 · 누적 투자 6.75억 달러+"},
+  {name:"MoMo",url:"https://www.momo.vn/",linkLabel:"공식 사이트",linkNote:"",region:"동남아",category:"금융/핀테크",feature:"AI 금융 어시스턴트 — 결제·계좌·금융 통합",skills:["LLM-대화","개인화-프로파일링"],impl:"슈퍼앱 AI 어시스턴트 + 금융 데이터 통합",metric:"베트남 1위 슈퍼앱"},
+  {name:"Yellow.ai",url:"https://yellow.ai/",linkLabel:"공식 사이트",linkNote:"",region:"동남아",category:"고객서비스/챗봇",feature:"기업용 대화형 AI — 다국어(바하사·태국어)",skills:["LLM-대화","에이전트-오케스트레이션","RAG-검색"],impl:"다국어 NLU + 지식 RAG + 워크플로 에이전트",metric:"동남아 기업용 대화형 AI 1위 · Singtel·AirAsia·Lazada 고객사"},
+  {name:"Dola (Smart AI Assistant)",url:"https://www.dola.com/",linkLabel:"공식 사이트",linkNote:"Smart AI Assistant 기준 연결. 원문의 일정 관리 설명은 동명 서비스와 혼재 가능성이 있어 확인 필요.",region:"동남아",category:"생산성/오피스",feature:"AI 어시스턴트 — 일정·문서 관리",skills:["LLM-대화","에이전트-오케스트레이션"],impl:"음성/텍스트 어시스턴트 + 캘린더 연동",metric:"베트남 생산성 앱 1위"},
+  {name:"Uknow.AI (猿辅导)",url:"https://www.uknowai.com/en",linkLabel:"공식 사이트",linkNote:"",region:"동남아",category:"교육/학습",feature:"AI 문제 풀이·학습 코칭",skills:["LLM-대화","RAG-검색","멀티모달-이해"],impl:"문제 OCR + 문제 DB + LLM 코칭",metric:"베트남 동종 앱 사용자 활성도 1위 · 4개국 커버"},
+  {name:"Litmatch",url:"https://www.litmatchapp.com/",linkLabel:"공식 사이트",linkNote:"",region:"동남아",category:"엔터테인먼트/소셜",feature:"AI 소셜 — 캐릭터 매칭",skills:["LLM-대화","개인화-프로파일링"],impl:"캐릭터 페르소나 + 매칭 알고리즘",metric:"Google Play 설치 1억 회+ · 4개국 소셜 Top 10"},
+  {name:"MochiChat",url:"https://himochichat.com/index.html",linkLabel:"공식 사이트",linkNote:"",region:"동남아",category:"엔터테인먼트/소셜",feature:"AI 감정 동반·캐릭터 채팅",skills:["LLM-대화","개인화-프로파일링","멀티모달-생성"],impl:"감정 인식 LLM + 캐릭터 그룹챗 + 만남 모드",metric:"태국 엔터 앱 12위 · 30일 다운로드 58만 건(MoM 366%↑)"},
+  {name:"Lexagle",url:"https://www.lexagle.com/",linkLabel:"공식 사이트",linkNote:"",region:"동남아",category:"법률/전문직",feature:"AI 계약 관리",skills:["RAG-검색","LLM-대화"],impl:"계약서 임베딩 + 조항 검색 + 워크플로",metric:"동남아 대표 리걸테크"},
+
+  // ---------- 글로벌 ----------
+  {name:"Harvey",url:"https://www.harvey.ai/",linkLabel:"공식 사이트",linkNote:"",region:"글로벌",category:"법률/전문직",feature:"법률 문서 생성·검토·판례 리서치",skills:["RAG-검색","LLM-대화","에이전트-오케스트레이션","평가-가드레일"],impl:"로펌별 데이터 격리 + 판례 RAG + 문서 검토 에이전트 + 인용 검증",metric:"기업가치 50억 달러 · 63개국 700개 고객 · 미국 Top 10 로펌 과반"},
+  {name:"Cursor (Anysphere)",url:"https://cursor.com/",linkLabel:"공식 사이트",linkNote:"",region:"글로벌",category:"개발/코딩",feature:"AI-first IDE — 멀티파일 리팩토링·에이전트 코딩",skills:["LLM-대화","에이전트-오케스트레이션","RAG-검색","평가-가드레일"],impl:"코드베이스 인덱싱 + 에이전트 실행 샌드박스 + 테스트 자동화",metric:"연환산 매출 20억 달러+ · 기업가치 293억 달러"},
+  {name:"Sierra",url:"https://sierra.ai/",linkLabel:"공식 사이트",linkNote:"",region:"글로벌",category:"고객서비스/챗봇",feature:"자율 AI 고객서비스 에이전트",skills:["LLM-대화","에이전트-오케스트레이션","RAG-검색","평가-가드레일"],impl:"기업별 에이전트 구성 + 지식 RAG + LLM-as-judge 평가",metric:"ARR 1억 달러+ · CB Insights 리딩 AI 에이전트"},
+  {name:"Midjourney",url:"https://www.midjourney.com/",linkLabel:"공식 사이트",linkNote:"",region:"글로벌",category:"콘텐츠 생성",feature:"텍스트 → 고품질 이미지 생성",skills:["멀티모달-생성","개인화-프로파일링","평가-가드레일"],impl:"자체 확산 모델 + 스타일 레퍼런스 + 유해 콘텐츠 필터",metric:"AI 이미지 생성 품질 '명백한 승자' · 1순위 34%"},
+  {name:"Runway",url:"https://runway.com/",linkLabel:"공식 사이트",linkNote:"",region:"글로벌",category:"콘텐츠 생성",feature:"텍스트/이미지 → 영상 생성·편집",skills:["멀티모달-생성","멀티모달-이해","자동화-파이프라인","평가-가드레일"],impl:"비디오 트랜스포머 + 카메라 제어 + 딥페이크 필터",metric:"영상 생성 2위(92% share) · 전문가 선호"},
+  {name:"Perplexity",url:"https://www.perplexity.ai/",linkLabel:"공식 사이트",linkNote:"",region:"글로벌",category:"생산성/오피스",feature:"실시간 웹 검색 RAG + 출처 기반 답변",skills:["RAG-검색","LLM-대화","에이전트-오케스트레이션","평가-가드레일"],impl:"실시간 웹 인덱싱 + 다중 쿼리 분해 + 출처 신뢰도 스코어링",metric:"국내 MAU 184만 · 글로벌 AI 검색 대표"},
+  {name:"Character.AI",url:"https://character.ai/",linkLabel:"공식 사이트",linkNote:"",region:"글로벌",category:"엔터테인먼트/소셜",feature:"AI 캐릭터 대화 + AI 네이티브 소셜 피드",skills:["LLM-대화","개인화-프로파일링","멀티모달-생성","평가-가드레일"],impl:"페르소나 LLM + 장기 메모리 + 소셜 피드 + 미성년자 보호",metric:"2,000만 사용자 · 세계 최초 합성 소셜 플랫폼"},
+  {name:"Salesforce Agentforce",url:"https://www.salesforce.com/agentforce/",linkLabel:"공식 사이트",linkNote:"",region:"글로벌",category:"생산성/오피스",feature:"CRM 연동 엔터프라이즈 AI 에이전트",skills:["에이전트-오케스트레이션","LLM-대화","RAG-검색","개인화-프로파일링","평가-가드레일"],impl:"Atlas 추론 엔진 + CRM 데이터 RAG + Einstein Trust Layer",metric:"G2 AI 에이전트 빌더 1위"},
+  {name:"GitHub Copilot",url:"https://github.com/features/copilot",linkLabel:"공식 사이트",linkNote:"",region:"글로벌",category:"개발/코딩",feature:"코드 자동완성·에이전트 모드",skills:["LLM-대화","에이전트-오케스트레이션","RAG-검색"],impl:"코드 컨텍스트 + 함수 호출 + 테스트 제안",metric:"엔지니어 42% 선택 1위 · 470만 유료 사용자"}
+];
+
+/* ============ ARCHETYPES ============ */
+const archetypes = [
+  {id:"A",name:"지식 어시스턴트",tagline:"문서를 이해하고 근거와 함께 답한다",color:"#a78bfa",
+   skills:["RAG-검색","LLM-대화","평가-가드레일"],optional:["멀티모달-이해","자동화-파이프라인"],
+   examples:["리드레이","슈퍼로이어","Harvey","Perplexity","Legalscape"],
+   mvp:["단일 도메인 문서 업로드(PDF/웹)","청킹·임베딩·pgvector 저장","하이브리드 검색(BM25+벡터)","출처 표시 Q&A","골든셋 50문항 정확도 평가"],difficulty:"중"},
+  {id:"B",name:"자동 콘텐츠 공장",tagline:"기획에서 배포까지 콘텐츠를 대량 생산한다",color:"#f472b6",
+   skills:["멀티모달-생성","자동화-파이프라인","평가-가드레일"],optional:["LLM-대화"],
+   examples:["Midjourney","Runway","Vidu","툰스퀘어","CapCut"],
+   mvp:["단일 포맷(이미지 또는 숏폼) 생성 API 연동","프롬프트 템플릿 라이브러리","배치 생성 큐(Celery)","저작권·유해성 필터","결과 갤러리·재생성"],difficulty:"중"},
+  {id:"C",name:"개인화 코치",tagline:"사용자 데이터로 행동 변화를 이끌어낸다",color:"#60a5fa",
+   skills:["개인화-프로파일링","LLM-대화","RAG-검색"],optional:["멀티모달-이해","평가-가드레일"],
+   examples:["스픽","필라이즈","Ant Afu","WealthNavi","あすけん"],
+   mvp:["온보딩 설문으로 초기 프로필","단일 모달 입력(음성 또는 사진)","도메인 지식 RAG","주간 코칭 리포트","의료·금융 규제 가드레일"],difficulty:"중상"},
+  {id:"D",name:"자율 에이전트",tagline:"계획하고 실행하고 검증한다",color:"#34d399",
+   skills:["에이전트-오케스트레이션","LLM-대화","RAG-검색","평가-가드레일"],optional:["개인화-프로파일링"],
+   examples:["Cursor","Sierra","Agentforce","NHN두레이","WorkBuddy"],
+   mvp:["단일 도메인 3~5개 툴 정의","LangGraph ReAct 루프","RAG 지식 연동","샌드박스 실행","HITL 에스컬레이션","태스크 성공률 평가"],difficulty:"상"},
+  {id:"E",name:"멀티모달 분석가",tagline:"이미지·음성·문서를 읽고 해석한다",color:"#fbbf24",
+   skills:["멀티모달-이해","LLM-대화","RAG-검색"],optional:["평가-가드레일"],
+   examples:["Gauth","필라이즈","슈퍼로이어","Ubie","카카오헬스케어 파스타"],
+   mvp:["단일 입력 모달(문제 사진 또는 처방전)","OCR + LLM Vision","도메인 RAG","단계별 해석 출력","골든셋 기반 인식·해석 정확도 평가"],difficulty:"중상"},
+  {id:"F",name:"대화형 캐릭터",tagline:"페르소나를 유지하고 관계를 만든다",color:"#fb923c",
+   skills:["LLM-대화","개인화-프로파일링","평가-가드레일"],optional:["멀티모달-생성","자동화-파이프라인"],
+   examples:["Character.AI","zeta","디어유 버블","MochiChat","Litmatch"],
+   mvp:["캐릭터 설정 스키마(성격·말투·배경)","장기 메모리(요약+벡터)","안전 필터(자해·성적·미성년자)","대화→소셜 피드 생성","리텐션·세션 길이 측정"],difficulty:"상"}
+];
+
+/* ============ SKILL CATALOG ============ */
+const skillCatalog = [
+  {name:"LLM-대화",color:"#22d3ee",impl:"사전학습 LLM + 시스템 프롬프트 + 대화 히스토리 관리. 도메인 특화 시 LoRA 파인튜닝 또는 프롬프트 엔지니어링",refs:["스픽","뤼튼","채널톡 ALF","Harvey","Character.AI","zeta"],stack:"GPT-4o / Claude Sonnet / Gemini API + LangChain Memory + FastAPI",difficulty:"하"},
+  {name:"RAG-검색",color:"#a78bfa",impl:"문서 파싱→청킹→임베딩→벡터DB→쿼리 임베딩→유사도 검색→LLM 컨텍스트 주입. 하이브리드 검색(BM25+벡터) 결합",refs:["리드레이","슈퍼로이어","Harvey","Perplexity","Legalscape","LegalOn"],stack:"bge-m3 임베딩 + pgvector(Supabase) + Cohere Rerank + LangChain RetrievalQA",difficulty:"중"},
+  {name:"에이전트-오케스트레이션",color:"#34d399",impl:"LLM이 태스크 분해→툴(API·함수) 선택→실행→결과 관찰→재계획. ReAct/Plan-and-Execute 패턴. MCP로 외부 시스템 연결",refs:["Cursor","Sierra","Agentforce","NHN두레이","카카오페이 페이아이","WorkBuddy"],stack:"LangGraph / CrewAI + OpenAI Function Calling + MCP 서버 + 샌드박스",difficulty:"상"},
+  {name:"멀티모달-생성",color:"#f472b6",impl:"확산 모델(이미지)·비디오 트랜스포머(영상)·TTS/보이스 클로닝(음성). 프롬프트→생성→후처리 파이프라인",refs:["Midjourney","Runway","Vidu","툰스퀘어","CapCut","뤼튼"],stack:"Replicate / Fal.ai API(Flux, Kling) + ComfyUI 파이프라인 + FFmpeg",difficulty:"중"},
+  {name:"멀티모달-이해",color:"#fbbf24",impl:"OCR(Tesseract/PaddleOCR), 음성인식(Whisper), 이미지 분류(ViT/CLIP), 문서 레이아웃 분석",refs:["Gauth","필라이즈","슈퍼로이어","카카오헬스케어 파스타","Ubie"],stack:"Whisper API + PaddleOCR + GPT-4o Vision + LayoutLM",difficulty:"중"},
+  {name:"개인화-프로파일링",color:"#60a5fa",impl:"사용자 행동 로그 수집→임베딩→프로필 벡터 저장→실시간 추천·난이도 조정. 콜드스타트는 온보딩 설문으로 보완",refs:["스픽","필라이즈","Ant Afu","Character.AI","에이블리","Agentforce"],stack:"Amplitude/Segment 로그 + Feast 피처스토어 + 경량 MLP 또는 LLM 프롬프트",difficulty:"중"},
+  {name:"자동화-파이프라인",color:"#fb923c",impl:"배치 스케줄링(Airflow/Celery)→대량 생성→품질 검사→배포. 이벤트 트리거 또는 크론 기반",refs:["툰스퀘어","Runway","리드레이","Vidu","CapCut"],stack:"Airflow / Temporal + Celery + S3 + Grafana 모니터링",difficulty:"중"},
+  {name:"평가-가드레일",color:"#f87171",impl:"LLM-as-judge 자동 평가 + 규칙 기반 필터 + 인간 검수(HITL). 환각 탐지(NLI·출처 검증), 유해 콘텐츠 분류기",refs:["슈퍼로이어","Harvey","Sierra","Ant Afu","Perplexity","Agentforce"],stack:"LangSmith / LangFuse + Guardrails AI + 자체 평가셋 + OpenAI Moderation",difficulty:"중상"}
+];
+
+/* ============ IDEAS ============ */
+const ideas = [
+  {title:"중소기업 계약서 검토 AI",archetype:"A + E 하이브리드",color:"#a78bfa",
+   desc:"계약서를 업로드하면 독소조항을 플래그하고 경영진용 1페이지 요약을 제공. 법무팀 없는 중소기업 대표가 10분 안에 리스크를 파악.",
+   skills:["RAG-검색","LLM-대화","멀티모달-이해","평가-가드레일"],
+   refs:["슈퍼로이어","Harvey","LegalOn","Lexagle"],
+   mvp:"PDF/HWP 파싱 → 조항 분할 → 체크리스트 RAG → 리스크 플래깅 → 1페이지 요약"},
+  {title:"커머스 CS 자동화 에이전트",archetype:"D · 자율 에이전트",color:"#34d399",
+   desc:"쇼핑몰 문의를 AI가 분류·응답하고 배송 조회·반품·교환까지 백엔드 API로 처리. 반복 문의를 자동화하고 예외 상황은 담당자에게 연결하는 구상.",
+   skills:["LLM-대화","에이전트-오케스트레이션","RAG-검색","평가-가드레일"],
+   refs:["채널톡 ALF","Sierra","Yellow.ai"],
+   mvp:"주문·배송 API 툴 3개 + FAQ RAG + 에스컬레이션 임계값"},
+  {title:"개인화 영어 회화 코치",archetype:"C · 개인화 코치",color:"#60a5fa",
+   desc:"사용자 발음·문법 약점을 학습해 맞춤 롤플레이를 생성. 매일 10분 회화 훈련을 제공하는 구상. 비용 효과는 별도 검증 필요.",
+   skills:["LLM-대화","멀티모달-이해","개인화-프로파일링","평가-가드레일"],
+   refs:["스픽","Duolingo"],
+   mvp:"STT + 발음 평가 + 롤플레이 LLM + 주간 리포트"},
+  {title:"브랜드 콘텐츠 공장",archetype:"B · 자동 콘텐츠 공장",color:"#f472b6",
+   desc:"브랜드 가이드와 제품 정보를 입력하면 SNS 카드뉴스·숏폼 영상·상세페이지를 대량 생성. 캐릭터·톤 일관성 유지.",
+   skills:["멀티모달-생성","자동화-파이프라인","평가-가드레일"],
+   refs:["툰스퀘어","Midjourney","Runway","CapCut"],
+   mvp:"템플릿 + 배치 생성 큐 + 브랜드 톤 필터 + 결과 갤러리"},
+  {title:"사내 지식 검색 어시스턴트",archetype:"A · 지식 어시스턴트",color:"#22d3ee",
+   desc:"사내 문서·메신저·위키를 RAG로 인덱싱해 '작년 계약 조건이 뭐였지?'를 출처와 함께 즉답. 권한별 접근 제어.",
+   skills:["RAG-검색","LLM-대화","평가-가드레일"],
+   refs:["네이버웍스","NHN두레이","Perplexity"],
+   mvp:"문서 수집 → 임베딩 → 권한 필터 → 출처 Q&A"}
+];
+
+const newServices = [
+  {
+    "name": "젠가드 (GenGuard)",
+    "company": "제논",
+    "cohort": "국내",
+    "isNew": true,
+    "region": "국내",
+    "launchDate": "2026-10-26",
+    "eventType": "출시 발표",
+    "status": "출시",
+    "category": "보안/AI 인프라",
+    "feature": "기업별 정책에 맞춰 생성형 AI의 입력·출력과 개인정보 노출 위험을 점검.",
+    "skills": [
+      "LLM-대화",
+      "평가-가드레일"
+    ],
+    "url": "https://www.genon.ai/company/news/261026",
+    "linkLabel": "공식 제품 소개",
+    "linkNote": "",
+    "impl": "기획 가설: 정책 규칙·경량 분류 모델·개인정보 마스킹을 서비스 앞뒤에 적용",
+    "metric": "출시 보도: 한국어 기업 환경의 AI 가드레일",
+    "addedAt": "2026-10-28",
+    "sources": [
+      {
+        "label": "벤처스퀘어",
+        "date": "2026-10-26",
+        "url": "https://www.venturesquare.net/1123078/",
+        "kind": "매체 보도"
+      },
+      {
+        "label": "공식 발표·제품 설명",
+        "date": "",
+        "url": "https://www.genon.ai/company/news/261026",
+        "kind": "공식"
+      }
+    ]
+  },
+  {
+    "name": "티즈 (Teaz)",
+    "company": "레진엔터테인먼트",
+    "cohort": "국내",
+    "isNew": true,
+    "region": "국내",
+    "launchDate": "2026-10-19",
+    "eventType": "정식 출시 예정일 발표",
+    "status": "공개 서비스",
+    "category": "엔터테인먼트/소셜",
+    "feature": "웹툰 IP의 캐릭터와 세계관을 활용한 대화형 AI 서비스.",
+    "skills": [
+      "LLM-대화",
+      "개인화-프로파일링",
+      "평가-가드레일"
+    ],
+    "url": "https://myteaz.io/ko",
+    "linkLabel": "공식 사이트",
+    "linkNote": "10월 13일 보도에서 19일 출시 예고; 공식 공지에서 오픈 확인.",
+    "impl": "기획 가설: IP 설정집 검색 + 캐릭터 메모리 + 원작 설정 검수",
+    "metric": "출시 예고 보도: 정식 IP를 활용하는 캐릭터 대화",
+    "addedAt": "2026-10-28",
+    "sources": [
+      {
+        "label": "한국경제",
+        "date": "2026-10-13",
+        "url": "https://www.hankyung.com/article/202610139344i",
+        "kind": "매체 보도"
+      },
+      {
+        "label": "공식 발표·제품 설명",
+        "date": "",
+        "url": "https://myteaz.io/ko/notices",
+        "kind": "공식"
+      }
+    ]
+  },
+  {
+    "name": "멘탯 디스커버리 콘솔",
+    "company": "멘탯",
+    "cohort": "국내",
+    "isNew": true,
+    "region": "국내",
+    "launchDate": "2026-10-13",
+    "eventType": "출시 발표",
+    "status": "출시",
+    "category": "보안/AI 인프라",
+    "feature": "출판 콘텐츠를 검색하고 AI 활용을 위한 라이선스·비용·계약을 검토하는 콘솔.",
+    "skills": [
+      "RAG-검색",
+      "자동화-파이프라인"
+    ],
+    "url": "https://mentat.so/",
+    "linkLabel": "운영사 사이트",
+    "linkNote": "",
+    "impl": "기획 가설: 콘텐츠 메타데이터 검색 → 사용권 범위 확인 → 견적·계약 기록",
+    "metric": "출시 보도: AI용 합법 데이터 조달을 제품화",
+    "addedAt": "2026-10-28",
+    "sources": [
+      {
+        "label": "벤처스퀘어",
+        "date": "2026-10-13",
+        "url": "https://www.venturesquare.net/1119236/",
+        "kind": "매체 보도"
+      },
+      {
+        "label": "공식 발표·제품 설명",
+        "date": "",
+        "url": "https://mentat.so/resources/news/",
+        "kind": "공식"
+      }
+    ]
+  },
+  {
+    "name": "Tab",
+    "company": "Tab",
+    "cohort": "해외",
+    "isNew": true,
+    "region": "글로벌",
+    "launchDate": "2026-10-07",
+    "eventType": "스텔스 해제·제품 공개",
+    "status": "대기 등록·베타",
+    "category": "생산성/오피스",
+    "feature": "메신저로 예약·검색·문서 변환 등 작업을 요청하는 개인 AI 에이전트.",
+    "skills": [
+      "LLM-대화",
+      "에이전트-오케스트레이션",
+      "자동화-파이프라인"
+    ],
+    "url": "https://tab.bot/",
+    "linkLabel": "공식 사이트",
+    "linkNote": "공개 보도일 기준. 지원 채널·이용 가능 지역은 신청 시 확인.",
+    "impl": "기획 가설: 메신저 → 브라우저·전화 도구 → 결제 전 확인 → 결과 회신",
+    "metric": "제품 소개 보도: 대화창에서 실제 작업 완료까지 연결",
+    "addedAt": "2026-10-28",
+    "sources": [
+      {
+        "label": "Tom’s Guide",
+        "date": "2026-10-07",
+        "url": "https://www.tomsguide.com/ai/meet-tab-the-personal-ai-assistant-race-is-heating-up-with-a-brand-new-personal-sidekick",
+        "kind": "매체 보도"
+      }
+    ]
+  },
+  {
+    "name": "롤핏 스튜디오 (RoleFit Studio)",
+    "company": "클레온",
+    "cohort": "국내",
+    "isNew": true,
+    "region": "국내",
+    "launchDate": "2026-10-06",
+    "eventType": "출시 발표",
+    "status": "출시",
+    "category": "교육/학습",
+    "feature": "디지털 휴먼과 면접·영업·고객응대 역할극을 연습하고 피드백을 받는 도구.",
+    "skills": [
+      "LLM-대화",
+      "멀티모달-이해",
+      "평가-가드레일"
+    ],
+    "url": "https://rolefit-studio.klleon.io/ko",
+    "linkLabel": "공식 사이트",
+    "linkNote": "국내 창업·운영사 기준 분류. 글로벌 사업을 함께 운영.",
+    "impl": "기획 가설: 직무 시나리오 + 음성 대화 + 평가 루브릭 + 훈련 리포트",
+    "metric": "출시 보도: 직무별 역할극 훈련의 제작·공유",
+    "addedAt": "2026-10-28",
+    "sources": [
+      {
+        "label": "벤처스퀘어",
+        "date": "2026-10-06",
+        "url": "https://www.venturesquare.net/1118195/",
+        "kind": "매체 보도"
+      },
+      {
+        "label": "공식 발표·제품 설명",
+        "date": "",
+        "url": "https://rolefit-studio.klleon.io/ko/about",
+        "kind": "공식"
+      }
+    ]
+  },
+  {
+    "name": "고스 (GOS)",
+    "company": "인포시즈",
+    "cohort": "국내",
+    "isNew": true,
+    "region": "국내",
+    "launchDate": "2026-10-06",
+    "eventType": "정식 출시",
+    "status": "출시",
+    "category": "보안/AI 인프라",
+    "feature": "기업 보안 로그의 관계를 그래프로 분석해 이상 행위와 공격 경로를 파악.",
+    "skills": [
+      "LLM-대화",
+      "평가-가드레일"
+    ],
+    "url": "https://blog.infocz.ai/graph-ai-security-gos",
+    "linkLabel": "공식 제품 소개",
+    "linkNote": "",
+    "impl": "기획 가설: 그래프 탐지로 대상을 좁힌 뒤 LLM 설명과 대응 승인 연결",
+    "metric": "출시·기업 공급 보도; 도입 성과는 회사 발표 기준",
+    "addedAt": "2026-10-28",
+    "sources": [
+      {
+        "label": "머니투데이",
+        "date": "2026-10-06",
+        "url": "https://www.mt.co.kr/index.php/future/2026/10/06/2026100609593685096",
+        "kind": "매체 보도"
+      },
+      {
+        "label": "공식 발표·제품 설명",
+        "date": "",
+        "url": "https://blog.infocz.ai/graph-ai-security-gos",
+        "kind": "공식"
+      }
+    ]
+  },
+  {
+    "name": "Hark Pro",
+    "company": "Hark",
+    "cohort": "해외",
+    "isNew": true,
+    "region": "글로벌",
+    "launchDate": "2026-10-06",
+    "eventType": "정식 공개",
+    "status": "출시",
+    "category": "생산성/오피스",
+    "feature": "개인 맥락을 기억하고 클라우드 컴퓨터로 생활·업무 작업을 돕는 AI.",
+    "skills": [
+      "LLM-대화",
+      "에이전트-오케스트레이션",
+      "개인화-프로파일링"
+    ],
+    "url": "https://hark.com/",
+    "linkLabel": "공식 사이트",
+    "linkNote": "",
+    "impl": "기획 가설: 장기 메모리 + 일정 신호 + 브라우저 작업 + 승인 단계",
+    "metric": "제품 디자인·출시 보도: 기억과 선제적 도움을 결합",
+    "addedAt": "2026-10-28",
+    "sources": [
+      {
+        "label": "Fast Company",
+        "date": "2026-10-06",
+        "url": "https://www.fastcompany.com/91618831/how-hark-designed-an-ai-assistant-thats-actually-helpful",
+        "kind": "매체 보도"
+      },
+      {
+        "label": "공식 발표·제품 설명",
+        "date": "",
+        "url": "https://hark.com/articles/introducing-hark-pro",
+        "kind": "공식"
+      }
+    ]
+  },
+  {
+    "name": "Underdog",
+    "company": "Conway Research",
+    "cohort": "해외",
+    "isNew": true,
+    "region": "글로벌",
+    "launchDate": "2026-10-02",
+    "eventType": "제품 공개",
+    "status": "초대 베타 보도",
+    "category": "생산성/오피스",
+    "feature": "사용자 기기에서 동작하는 개인 AI를 지향하는 에이전트.",
+    "skills": [
+      "LLM-대화",
+      "에이전트-오케스트레이션",
+      "개인화-프로파일링"
+    ],
+    "url": "https://underdog.ai/",
+    "linkLabel": "공식 사이트",
+    "linkNote": "10월 2일 투자사 제품 소개; 10월 6일 보도는 초대 베타로 설명.",
+    "impl": "기획 가설: 기기 내 추론·메모리 + 제한된 도구 실행 + 승인",
+    "metric": "베타 보도와 투자사 소개: 개인 기기에서 실행하는 AI",
+    "addedAt": "2026-10-28",
+    "sources": [
+      {
+        "label": "RuntimeWire",
+        "date": "2026-10-06",
+        "url": "https://runtimewire.com/article/conway-underdog-on-device-ai-payment-fees",
+        "kind": "매체 보도"
+      },
+      {
+        "label": "공식 발표·제품 설명",
+        "date": "",
+        "url": "https://a16z.com/announcement/investing-in-conway-the-creator-of-underdog/",
+        "kind": "공식"
+      }
+    ]
+  },
+  {
+    "name": "다빈치큐 (DaVinciQ)",
+    "company": "큐엔스마트",
+    "cohort": "국내",
+    "isNew": true,
+    "region": "국내",
+    "launchDate": "2026-09-30",
+    "eventType": "출시 발표",
+    "status": "출시",
+    "category": "교육/학습",
+    "feature": "AI가 질문을 던지고 학생이 답하는 토론으로 사고 과정을 확장하는 학습 서비스.",
+    "skills": [
+      "LLM-대화",
+      "개인화-프로파일링",
+      "평가-가드레일"
+    ],
+    "url": "https://www.davinciq.com",
+    "linkLabel": "공식 사이트",
+    "linkNote": "공식 주소는 운영사 채용 공고에서 확인. 웹 수집 도구로 본문 접근 제한.",
+    "impl": "기획 가설: 관점별 질문 생성 + 대화 기록 분석 + 교사 검토용 리포트",
+    "metric": "출시 보도와 헤럴드경제 스타트업 소개: 질문 중심 학습",
+    "addedAt": "2026-10-28",
+    "sources": [
+      {
+        "label": "벤처스퀘어",
+        "date": "2026-09-30",
+        "url": "https://www.venturesquare.net/1116878/",
+        "kind": "매체 보도"
+      },
+      {
+        "label": "운영사 채용공고 · 세종대 게시",
+        "date": "",
+        "url": "https://dept.sejong.ac.kr/cedpt/intro/professor001.do?article.offset=0&articleLimit=10&articleNo=28552&mode=view",
+        "kind": "운영사 공고"
+      }
+    ]
+  },
+  {
+    "name": "Dazzle",
+    "company": "Dazzle AI",
+    "cohort": "해외",
+    "isNew": true,
+    "region": "글로벌",
+    "launchDate": "2026-09-29",
+    "eventType": "제품 공개",
+    "status": "초대 기반",
+    "category": "생산성/오피스",
+    "feature": "사진과 스크린샷에서 취향·할 일을 파악하는 개인 AI 비서.",
+    "skills": [
+      "멀티모달-이해",
+      "개인화-프로파일링",
+      "에이전트-오케스트레이션"
+    ],
+    "url": "https://dazzle.ai/",
+    "linkLabel": "공식 사이트",
+    "linkNote": "회사 설립 발표는 2025년, 제품 공개는 2026년.",
+    "impl": "기획 가설: 선택 사진 분석 → 실행 후보 제안 → 사용자 승인",
+    "metric": "출시 보도: 프롬프트 대신 사진을 개인화의 출발점으로 사용",
+    "addedAt": "2026-10-28",
+    "sources": [
+      {
+        "label": "Unite.AI",
+        "date": "",
+        "url": "https://www.unite.ai/marissa-mayers-dazzle-ai-launches-photo-based-personal-assistant/",
+        "kind": "매체 보도"
+      },
+      {
+        "label": "공식 발표·제품 설명",
+        "date": "",
+        "url": "https://dazzle.ai/announcing-dazzle-pictures-not-prompts/",
+        "kind": "공식"
+      }
+    ]
+  },
+  {
+    "name": "폴리타 (Polita)",
+    "company": "보이스루",
+    "cohort": "국내",
+    "isNew": true,
+    "region": "국내",
+    "launchDate": "2026-09-17",
+    "eventType": "출시 발표",
+    "status": "출시",
+    "category": "콘텐츠 생성",
+    "feature": "AI 더빙에 전문 검수를 결합해 다국어 콘텐츠 제작을 지원.",
+    "skills": [
+      "멀티모달-생성",
+      "자동화-파이프라인",
+      "평가-가드레일"
+    ],
+    "url": "https://polita.ai/ko",
+    "linkLabel": "공식 사이트",
+    "linkNote": "국내 보이스루의 서비스 브랜드 기준 분류.",
+    "impl": "기획 가설: 번역 → 음성 생성 → 구간 싱크 → 사람 검수",
+    "metric": "출시 및 방송영상 마켓 참가 보도: 검수 포함 더빙",
+    "addedAt": "2026-10-28",
+    "sources": [
+      {
+        "label": "벤처스퀘어",
+        "date": "2026-09-17",
+        "url": "https://www.venturesquare.net/1114752/",
+        "kind": "매체 보도"
+      }
+    ]
+  },
+  {
+    "name": "에어리 스튜디오 (Airy Studio)",
+    "company": "아웃오브셋",
+    "cohort": "국내",
+    "isNew": true,
+    "region": "국내",
+    "launchDate": "2026-08-12",
+    "eventType": "출시 발표",
+    "status": "출시",
+    "category": "콘텐츠 생성",
+    "feature": "한국어·영어 텍스트를 AI 음성으로 만드는 TTS 제작 도구.",
+    "skills": [
+      "멀티모달-생성",
+      "자동화-파이프라인"
+    ],
+    "url": "https://airy.so/studio",
+    "linkLabel": "공식 사이트",
+    "linkNote": "",
+    "impl": "기획 가설: 텍스트 분할 → 목소리·스타일 설정 → 음성 생성·내보내기",
+    "metric": "출시 보도: 경량 음성 합성과 제작 접근성",
+    "addedAt": "2026-10-28",
+    "sources": [
+      {
+        "label": "ZDNet Korea",
+        "date": "2026-08-12",
+        "url": "https://zdnet.co.kr/view/?no=20260812150145",
+        "kind": "매체 보도"
+      }
+    ]
+  },
+  {
+    "name": "라이브스피치 (LiveSpeech)",
+    "company": "드로우드림",
+    "cohort": "국내",
+    "isNew": true,
+    "region": "국내",
+    "launchDate": "2026-08-03",
+    "eventType": "출시 발표",
+    "status": "출시",
+    "category": "고객서비스/챗봇",
+    "feature": "다국어 전화 상담에서 문의·예약·후속 업무를 자동화하는 AI 상담원.",
+    "skills": [
+      "LLM-대화",
+      "에이전트-오케스트레이션",
+      "자동화-파이프라인"
+    ],
+    "url": "https://store.cafe24.com/kr/apps/42255",
+    "linkLabel": "공식 앱스토어",
+    "linkNote": "",
+    "impl": "기획 가설: 전화 STT → 업무 의도 분류 → 예약·주문 API → 상담원 이관",
+    "metric": "출시 보도: 전화 응대와 업무 처리를 함께 제공",
+    "addedAt": "2026-10-28",
+    "sources": [
+      {
+        "label": "벤처스퀘어",
+        "date": "2026-08-03",
+        "url": "https://www.venturesquare.net/1103218/",
+        "kind": "매체 보도"
+      }
+    ]
+  },
+  {
+    "name": "누비다 (nuvida)",
+    "company": "오픈랩스",
+    "cohort": "국내",
+    "isNew": true,
+    "region": "국내",
+    "launchDate": "2026-07-23",
+    "eventType": "출시 보도",
+    "status": "출시",
+    "category": "개발/코딩",
+    "feature": "자연어 요구사항을 바탕으로 애플리케이션 개발을 돕는 AI 플랫폼.",
+    "skills": [
+      "LLM-대화",
+      "에이전트-오케스트레이션",
+      "자동화-파이프라인"
+    ],
+    "url": "https://nuvida.openlabs.co.kr/",
+    "linkLabel": "공식 사이트",
+    "linkNote": "4월에는 6월 출시 예정으로 발표. 7월 출시 보도일을 표시.",
+    "impl": "기획 가설: 요구사항 구조화 → 기능별 에이전트 → 통합 테스트",
+    "metric": "출시 보도: 요구사항부터 구현까지 연결하는 개발 도구",
+    "addedAt": "2026-10-28",
+    "sources": [
+      {
+        "label": "한국경제",
+        "date": "2026-07-23",
+        "url": "https://www.hankyung.com/article/202607230932O",
+        "kind": "매체 보도"
+      }
+    ]
+  },
+  {
+    "name": "한줄로AI",
+    "company": "인비토",
+    "cohort": "국내",
+    "isNew": true,
+    "region": "국내",
+    "launchDate": "2026-07-22",
+    "eventType": "정식 출시",
+    "status": "출시",
+    "category": "커머스/쇼핑",
+    "feature": "쇼핑몰 고객 분류와 메시지 제작·발송을 연결하는 AI 마케팅 서비스.",
+    "skills": [
+      "LLM-대화",
+      "개인화-프로파일링",
+      "자동화-파이프라인"
+    ],
+    "url": "https://hanjul.ai",
+    "linkLabel": "공식 사이트",
+    "linkNote": "",
+    "impl": "기획 가설: 고객 행동 세분화 → 문구 생성 → 채널 발송 → 반응 측정",
+    "metric": "출시 보도: 자사몰의 반복 마케팅 실행을 통합",
+    "addedAt": "2026-10-28",
+    "sources": [
+      {
+        "label": "벤처스퀘어",
+        "date": "2026-07-22",
+        "url": "https://www.venturesquare.net/1100171/",
+        "kind": "매체 보도"
+      }
+    ]
+  },
+  {
+    "name": "아이오즈 에카 (AIOZ EKA)",
+    "company": "포시에스",
+    "cohort": "국내",
+    "isNew": true,
+    "region": "국내",
+    "launchDate": "2026-07-16",
+    "eventType": "정식 출시 발표",
+    "status": "출시",
+    "category": "생산성/오피스",
+    "feature": "사내 문서와 데이터에 질문하고 업무에 활용하는 기업 지식 에이전트.",
+    "skills": [
+      "LLM-대화",
+      "RAG-검색",
+      "에이전트-오케스트레이션"
+    ],
+    "url": "https://kr.forcs.com/about-us/",
+    "linkLabel": "운영사 사이트",
+    "linkNote": "6월 컨퍼런스 공개 후 7월 16일 정식 출시 발표. 운영사 소개로 연결.",
+    "impl": "기획 가설: 권한 기반 사내 검색 → 업무 도구 연결 → 실행 결과 기록",
+    "metric": "EBSC 공개 및 7월 출시 보도: 전자문서 기술을 기업 AI로 확장",
+    "addedAt": "2026-10-28",
+    "sources": [
+      {
+        "label": "ZDNet Korea",
+        "date": "2026-07-16",
+        "kind": "매체 보도",
+        "url": "https://zdnet.co.kr/view/?no=20260716163541"
+      },
+      {
+        "label": "MTN · 6월 첫 공개 보도",
+        "date": "2026-06-19",
+        "kind": "매체 보도",
+        "url": "https://news.mtn.co.kr/news-detail/2026061916245698420"
+      }
+    ]
+  },
+  {
+    "name": "하루듀티 (Haruduty)",
+    "company": "하루듀티",
+    "cohort": "국내",
+    "isNew": true,
+    "region": "국내",
+    "launchDate": "2026-07-15",
+    "eventType": "모바일 앱 출시 발표",
+    "status": "출시",
+    "category": "생산성/오피스",
+    "feature": "병동 규칙·숙련도·개인 요청을 반영해 간호사 교대 근무표를 만드는 서비스.",
+    "skills": [
+      "자동화-파이프라인",
+      "평가-가드레일"
+    ],
+    "url": "https://www.haruduty.com/",
+    "linkLabel": "공식 사이트",
+    "linkNote": "보도 본문의 7월 15일 발표 기준. 공식 업데이트 글은 7월 16일.",
+    "impl": "기획 가설: 제약조건 최적화 → 충돌 원인 설명 → 관리자 조정",
+    "metric": "모바일 출시 보도: 복잡한 현장 제약을 푸는 일정 자동화",
+    "addedAt": "2026-10-28",
+    "sources": [
+      {
+        "label": "스타트업타임즈",
+        "date": "2026-08-02",
+        "url": "https://www.startuptimes.kr/article/하루듀티-AI-기반-간호사-3교대-근무표-자동-생성-모바일-앱-정식-출시",
+        "kind": "매체 보도"
+      },
+      {
+        "label": "공식 발표·제품 설명",
+        "date": "",
+        "url": "https://www.haruduty.com/blog",
+        "kind": "공식"
+      }
+    ]
+  },
+  {
+    "name": "Melius",
+    "company": "Melius AI",
+    "cohort": "해외",
+    "isNew": true,
+    "region": "글로벌",
+    "launchDate": "2026-07-01",
+    "eventType": "제품 비전·서비스 공개",
+    "status": "출시",
+    "category": "콘텐츠 생성",
+    "feature": "여러 AI 에이전트로 브랜드 이미지·영상 제작 흐름을 운영하는 플랫폼.",
+    "skills": [
+      "에이전트-오케스트레이션",
+      "멀티모달-생성",
+      "자동화-파이프라인"
+    ],
+    "url": "https://www.melius.com/",
+    "linkLabel": "공식 사이트",
+    "linkNote": "7월 공식 공개 글 기준. 10월 투자 보도자료와 구분; 미래 예정 기능은 제외.",
+    "impl": "기획 가설: 브랜드 기준·소재 라이브러리 → 제작 에이전트 → 편집·검수",
+    "metric": "투자·제품 소개 보도자료: 창작 작업을 에이전트 단위로 조직",
+    "addedAt": "2026-10-28",
+    "sources": [
+      {
+        "label": "GlobeNewswire·회사 배포",
+        "date": "2026-10-06",
+        "url": "https://www.globenewswire.com/news-release/2026/10/06/3375572/0/en/melius-raises-25-million-for-the-first-agents-lab-for-creative-work.html",
+        "kind": "회사 배포 보도자료"
+      },
+      {
+        "label": "공식 발표·제품 설명",
+        "date": "",
+        "url": "https://www.melius.com/manifesto",
+        "kind": "공식"
+      }
+    ]
+  },
+  {
+    "name": "Genie One",
+    "company": "Databricks",
+    "cohort": "해외",
+    "isNew": true,
+    "region": "글로벌",
+    "launchDate": "2026-06-16",
+    "eventType": "신규 제품 공개",
+    "status": "공개 제품·조건 확인",
+    "category": "생산성/오피스",
+    "feature": "정형·비정형 기업 데이터를 함께 활용하는 업무 AI 동료.",
+    "skills": [
+      "RAG-검색",
+      "에이전트-오케스트레이션",
+      "자동화-파이프라인"
+    ],
+    "url": "https://www.databricks.com/company/newsroom/press-releases/databricks-launches-genie-one-all-new-agentic-coworker-every-team",
+    "linkLabel": "공식 발표",
+    "linkNote": "",
+    "impl": "기획 가설: 업무 온톨로지 + 데이터 검색 + 재사용 가능한 작업 에이전트",
+    "metric": "제품 공개 보도: 팀의 데이터·업무 앱을 연결",
+    "addedAt": "2026-10-28",
+    "sources": [
+      {
+        "label": "IT Pro",
+        "date": "2026-06-17",
+        "url": "https://www.itpro.com/technology/artificial-intelligence/databricks-launches-ai-co-worker-genie-one",
+        "kind": "매체 보도"
+      }
+    ]
+  },
+  {
+    "name": "Pool",
+    "company": "Random Access Memories",
+    "cohort": "해외",
+    "isNew": true,
+    "region": "글로벌",
+    "launchDate": "2026-06-11",
+    "eventType": "대외 출시 보도",
+    "status": "iOS 앱 제공",
+    "category": "생산성/오피스",
+    "feature": "스크린샷을 분류·검색하고 저장한 정보를 다시 활용하도록 돕는 앱.",
+    "skills": [
+      "멀티모달-이해",
+      "RAG-검색",
+      "개인화-프로파일링"
+    ],
+    "url": "https://apps.apple.com/us/app/pool-the-screenshot-app/id6752956163",
+    "linkLabel": "공식 앱스토어",
+    "linkNote": "출시 보도일 기준. 앱 추적 사이트에는 3월 초기 등록 이력도 표시됨.",
+    "impl": "기획 가설: 이미지 내용 추출 → 의미 검색 → 관련 링크와 행동 제안",
+    "metric": "스크린샷 관리 앱 출시 보도",
+    "addedAt": "2026-10-28",
+    "sources": [
+      {
+        "label": "TechCrunch",
+        "date": "2026-06-11",
+        "url": "https://techcrunch.com/2026/06/11/pools-new-app-turns-your-screenshots-into-a-searchable-memory-bank/",
+        "kind": "매체 보도"
+      }
+    ]
+  },
+  {
+    "name": "Sesame 앱",
+    "company": "Sesame",
+    "cohort": "해외",
+    "isNew": true,
+    "region": "글로벌",
+    "launchDate": "2026-05-27",
+    "eventType": "iOS 프리뷰 공개",
+    "status": "모바일 앱 제공",
+    "category": "생산성/오피스",
+    "feature": "자연스러운 음성 대화를 중심으로 일상과 업무를 돕는 개인 AI 앱.",
+    "skills": [
+      "LLM-대화",
+      "멀티모달-이해",
+      "개인화-프로파일링"
+    ],
+    "url": "https://www.sesame.com/",
+    "linkLabel": "공식 사이트",
+    "linkNote": "음성 데모는 2025년; 이번 NEW 대상은 2026년 모바일 앱. 10월 공식 안내는 iOS·Android 지원.",
+    "impl": "기획 가설: 낮은 지연의 음성 대화 + 개인 메모리 + 작업 연결",
+    "metric": "앱 프리뷰 보도 및 커뮤니티 AMA: 음성 중심 이용 경험",
+    "addedAt": "2026-10-28",
+    "sources": [
+      {
+        "label": "TestingCatalog",
+        "date": "2026-05-28",
+        "url": "https://www.testingcatalog.com/sesame-debutes-ios-app-in-preview-with-personal-voice-agents/",
+        "kind": "매체 보도"
+      },
+      {
+        "label": "공식 발표·제품 설명",
+        "date": "",
+        "url": "https://www.sesame.com/journal/getting-started",
+        "kind": "공식"
+      }
+    ]
+  },
+  {
+    "name": "바로도리 (Barodori)",
+    "company": "제로더",
+    "cohort": "국내",
+    "isNew": true,
+    "region": "국내",
+    "launchDate": "2026-05-19",
+    "eventType": "6월 출시 예고",
+    "status": "앱 제공 확인",
+    "category": "헬스케어/웰니스",
+    "feature": "영유아 목 기울기·두상 관련 홈케어 기록과 보호자 운동 안내를 돕는 앱.",
+    "skills": [
+      "멀티모달-이해",
+      "개인화-프로파일링"
+    ],
+    "url": "https://www.barodori.com/ko",
+    "linkLabel": "공식 사이트",
+    "linkNote": "발표일 기준. 최초 앱 배포일과 다를 수 있음. 의료 진단·치료 대체 서비스로 분류하지 않음.",
+    "impl": "기획 가설: 영상·기록 입력 → 변화 추적 → 보호자용 안내",
+    "metric": "출시 예고 보도: 보호자 일상 기록과 홈케어 지원",
+    "addedAt": "2026-10-28",
+    "sources": [
+      {
+        "label": "벤처스퀘어",
+        "date": "2026-05-19",
+        "url": "https://www.venturesquare.net/1083422/",
+        "kind": "매체 보도"
+      }
+    ]
+  },
+  {
+    "name": "카페24 AI 홈페이지빌더",
+    "company": "카페24",
+    "cohort": "국내",
+    "isNew": true,
+    "region": "국내",
+    "launchDate": "2026-05-19",
+    "eventType": "출시 발표",
+    "status": "출시",
+    "category": "개발/코딩",
+    "feature": "업종에 맞는 홈페이지를 생성하고 자연어로 편집하는 AI 빌더.",
+    "skills": [
+      "LLM-대화",
+      "멀티모달-생성",
+      "자동화-파이프라인"
+    ],
+    "url": "https://hosting.cafe24.com/",
+    "linkLabel": "공식 호스팅·빌더 안내",
+    "linkNote": "",
+    "impl": "기획 가설: 업종 질문 → 템플릿·콘텐츠 생성 → 미리보기 → 배포",
+    "metric": "출시 보도: 제작부터 호스팅까지 연결",
+    "addedAt": "2026-10-28",
+    "sources": [
+      {
+        "label": "바이라인네트워크",
+        "date": "2026-05-19",
+        "url": "https://byline.network/2026/05/19_cafe24/",
+        "kind": "매체 보도"
+      }
+    ]
+  },
+  {
+    "name": "Firefly AI Assistant",
+    "company": "Adobe",
+    "cohort": "해외",
+    "isNew": true,
+    "region": "글로벌",
+    "launchDate": "2026-04-27",
+    "eventType": "공개 베타",
+    "status": "베타",
+    "category": "콘텐츠 생성",
+    "feature": "자연어 지시로 여러 창작 도구를 연결해 결과물을 제작·수정하는 AI 비서.",
+    "skills": [
+      "LLM-대화",
+      "에이전트-오케스트레이션",
+      "멀티모달-생성"
+    ],
+    "url": "https://www.adobe.com/products/firefly/features/ai-assistant.html",
+    "linkLabel": "공식 사이트",
+    "linkNote": "4월 15일 발표, 4월 27일 공개 베타 기준.",
+    "impl": "기획 가설: 창작 의도 파싱 → 편집 작업 연결 → 미리보기·수정",
+    "metric": "공개 베타 보도: 창작 앱을 가로지르는 에이전트",
+    "addedAt": "2026-10-28",
+    "sources": [
+      {
+        "label": "Axios",
+        "date": "2026-04-27",
+        "url": "https://www.axios.com/2026/04/27/adobe-agentic-ai-firefly-claude",
+        "kind": "매체 보도"
+      },
+      {
+        "label": "공식 발표·제품 설명",
+        "date": "",
+        "url": "https://blog.adobe.com/en/publish/2026/04/27/firefly-ai-assistant-public-beta",
+        "kind": "공식"
+      }
+    ]
+  },
+  {
+    "name": "Thunderbolt",
+    "company": "Mozilla 계열",
+    "cohort": "해외",
+    "isNew": true,
+    "region": "글로벌",
+    "launchDate": "2026-04-16",
+    "eventType": "오픈소스 공개",
+    "status": "기업용·개발자용",
+    "category": "보안/AI 인프라",
+    "feature": "모델 선택과 자체 호스팅을 지원하는 기업용 AI 클라이언트.",
+    "skills": [
+      "LLM-대화",
+      "RAG-검색",
+      "평가-가드레일"
+    ],
+    "url": "https://www.thunderbolt.io/announcing-thunderbolt",
+    "linkLabel": "공식 발표",
+    "linkNote": "",
+    "impl": "기획 가설: 모델 어댑터 + 사내 데이터 연결 + 자체 호스팅",
+    "metric": "개발자 커뮤니티 출시 논의: 모델·데이터 통제권",
+    "addedAt": "2026-10-28",
+    "sources": [
+      {
+        "label": "Reddit · r/LocalLLaMA",
+        "date": "2026-04-16",
+        "url": "https://www.reddit.com/r/LocalLLaMA/comments/1sn4ibj/mozilla_announces_thunderbolt_as_an_opensource/",
+        "kind": "커뮤니티"
+      },
+      {
+        "label": "공식 발표·제품 설명",
+        "date": "",
+        "url": "https://www.thunderbolt.io/announcing-thunderbolt",
+        "kind": "공식"
+      }
+    ]
+  },
+  {
+    "name": "Wingman",
+    "company": "Emergent",
+    "cohort": "해외",
+    "isNew": true,
+    "region": "글로벌",
+    "launchDate": "2026-04-15",
+    "eventType": "출시 보도",
+    "status": "출시",
+    "category": "생산성/오피스",
+    "feature": "메신저에서 이메일·일정·외부 업무 도구를 다루는 AI 에이전트.",
+    "skills": [
+      "LLM-대화",
+      "에이전트-오케스트레이션",
+      "자동화-파이프라인"
+    ],
+    "url": "https://emergent.sh/news/emergent-launches-wingman-autonomous-ai-agent",
+    "linkLabel": "공식 제품 소개",
+    "linkNote": "인도 창업 기업의 신규 제품. 공식 소개는 4월 17일.",
+    "impl": "기획 가설: 메신저 입력 → 앱 커넥터 → 실행 계획 → 중요 작업 승인",
+    "metric": "신규 에이전트 출시 보도",
+    "addedAt": "2026-10-28",
+    "sources": [
+      {
+        "label": "TechCrunch",
+        "date": "2026-04-15",
+        "url": "https://techcrunch.com/2026/04/15/indias-vibe-coding-startup-emergent-enters-openclaw-like-ai-agent-space/",
+        "kind": "매체 보도"
+      },
+      {
+        "label": "공식 발표·제품 설명",
+        "date": "",
+        "url": "https://emergent.sh/news/emergent-launches-wingman-autonomous-ai-agent",
+        "kind": "공식"
+      }
+    ]
+  },
+  {
+    "name": "에이전트허브 (AgentHub)",
+    "company": "트립비토즈",
+    "cohort": "국내",
+    "isNew": true,
+    "region": "국내",
+    "launchDate": "2026-04-10",
+    "eventType": "출시 발표",
+    "status": "출시",
+    "category": "커머스/쇼핑",
+    "feature": "호텔·여행업계의 견적과 제안 등 B2B 유통 업무를 돕는 AI 서비스.",
+    "skills": [
+      "LLM-대화",
+      "RAG-검색",
+      "에이전트-오케스트레이션"
+    ],
+    "url": "http://agenthub.tripbtoz.com/",
+    "linkLabel": "공식 사이트",
+    "linkNote": "",
+    "impl": "기획 가설: 공급 조건 검색 → 요청 분석 → 견적·제안 생성 → 담당자 확인",
+    "metric": "출시 보도: 여행 유통의 견적·제안 업무에 AI 적용",
+    "addedAt": "2026-10-28",
+    "sources": [
+      {
+        "label": "벤처스퀘어",
+        "date": "2026-04-10",
+        "url": "https://www.venturesquare.net/1075279/",
+        "kind": "매체 보도"
+      }
+    ]
+  },
+  {
+    "name": "티오더GPT",
+    "company": "티오더",
+    "cohort": "국내",
+    "isNew": true,
+    "region": "국내",
+    "launchDate": "2026-04-02",
+    "eventType": "베타 공개",
+    "status": "베타 출시 보도",
+    "category": "커머스/쇼핑",
+    "feature": "카카오톡 대화로 메뉴 수정·품절 처리 등 매장 운영을 돕는 AI.",
+    "skills": [
+      "LLM-대화",
+      "에이전트-오케스트레이션",
+      "자동화-파이프라인"
+    ],
+    "url": "https://www.torder.com/ceoGuide/post/t-time-06",
+    "linkLabel": "공식 사용 안내",
+    "linkNote": "",
+    "impl": "기획 가설: 매장별 권한 확인 → 자연어를 관리 명령으로 변환 → 변경 전 확인",
+    "metric": "베타 보도 및 운영사 사용 가이드: 소상공인 업무를 대화로 처리",
+    "addedAt": "2026-10-28",
+    "sources": [
+      {
+        "label": "ZDNet Korea·다음",
+        "date": "2026-04-02",
+        "url": "https://v.daum.net/v/60r5ufGhS0",
+        "kind": "매체 보도"
+      },
+      {
+        "label": "공식 발표·제품 설명",
+        "date": "",
+        "url": "https://www.torder.com/ceoGuide/post/t-time-06",
+        "kind": "공식"
+      }
+    ]
+  },
+  {
+    "name": "삼쩜삼Q",
+    "company": "자비스앤빌런즈",
+    "cohort": "국내",
+    "isNew": true,
+    "region": "국내",
+    "launchDate": "2026-03-24",
+    "eventType": "출시 발표",
+    "status": "출시",
+    "category": "법률/전문직",
+    "feature": "세무 자료와 전문가 검증 콘텐츠를 활용한 AI 질의응답 서비스.",
+    "skills": [
+      "LLM-대화",
+      "RAG-검색",
+      "평가-가드레일"
+    ],
+    "url": "https://help.3o3.co.kr/hc/ko/sections/57438608540569-삼쩜삼Q는",
+    "linkLabel": "공식 서비스 안내",
+    "linkNote": "",
+    "impl": "기획 가설: 세무 근거 검색 → 출처 포함 답변 → 전문가 검토·서비스 연결",
+    "metric": "출시·카카오 연동 보도: 전문 상담과 실행 경로 연결",
+    "addedAt": "2026-10-28",
+    "sources": [
+      {
+        "label": "파이낸셜뉴스",
+        "date": "2026-03-24",
+        "url": "https://www.fnnews.com/news/202603241324148537",
+        "kind": "매체 보도"
+      }
+    ]
+  },
+  {
+    "name": "Littlebird",
+    "company": "Littlebird",
+    "cohort": "해외",
+    "isNew": true,
+    "region": "글로벌",
+    "launchDate": "2026-03-24",
+    "eventType": "공개 출시",
+    "status": "출시",
+    "category": "생산성/오피스",
+    "feature": "업무 맥락을 기억해 필요한 정보를 찾아주는 개인 AI 도구.",
+    "skills": [
+      "RAG-검색",
+      "멀티모달-이해",
+      "개인화-프로파일링"
+    ],
+    "url": "https://littlebird.ai/",
+    "linkLabel": "공식 사이트",
+    "linkNote": "",
+    "impl": "기획 가설: 사용자가 허용한 업무 맥락 수집 → 검색 → 요약·알림",
+    "metric": "출시 보도자료 및 Product Hunt 출시 공유: 업무 맥락 기억",
+    "addedAt": "2026-10-28",
+    "sources": [
+      {
+        "label": "PR Newswire·회사 배포",
+        "date": "2026-03-24",
+        "url": "https://www.prnewswire.com/news-releases/littlebird-raises-11-million-to-launch-the-only-ai-that-already-knows-what-youre-working-on-302721664.html",
+        "kind": "회사 배포 보도자료"
+      },
+      {
+        "label": "공식 발표·제품 설명",
+        "date": "",
+        "url": "https://littlebird.ai/blog/littlebird-raises-11m-to-build-the-first-full-context-ai",
+        "kind": "공식"
+      },
+      {
+        "label": "Reddit · Product Hunt 출시 공유",
+        "date": "2026-03-26",
+        "kind": "커뮤니티·제작자 게시",
+        "url": "https://www.reddit.com/r/ProductHunters/comments/1s4n66a/were_live_on_product_hunt_today_and_somehow/"
+      }
+    ]
+  },
+  {
+    "name": "Project SnowWork",
+    "company": "Snowflake",
+    "cohort": "해외",
+    "isNew": true,
+    "region": "글로벌",
+    "launchDate": "2026-03-18",
+    "eventType": "리서치 프리뷰",
+    "status": "제한 프리뷰",
+    "category": "생산성/오피스",
+    "feature": "기업 데이터를 활용해 분석·계획·실행을 이어가는 데스크톱 AI 에이전트.",
+    "skills": [
+      "LLM-대화",
+      "RAG-검색",
+      "에이전트-오케스트레이션"
+    ],
+    "url": "https://www.snowflake.com/en/news/press-releases/snowflake-launches-project-snowwork-bringing-outcome-driven-ai-to-every-business-user/",
+    "linkLabel": "공식 발표",
+    "linkNote": "공개 당시 제한 고객 프리뷰. 일반 이용 가능 여부 별도 확인.",
+    "impl": "기획 가설: 기업 데이터 권한 → 분석 계획 → 결과물·업무 실행",
+    "metric": "기업용 에이전트 공개 보도",
+    "addedAt": "2026-10-28",
+    "sources": [
+      {
+        "label": "Axios",
+        "date": "2026-03-18",
+        "url": "https://www.axios.com/2026/03/18/ai-snowflake-enterprise-software",
+        "kind": "매체 보도"
+      }
+    ]
+  },
+  {
+    "name": "NVIDIA NemoClaw",
+    "company": "NVIDIA",
+    "cohort": "해외",
+    "isNew": true,
+    "region": "글로벌",
+    "launchDate": "2026-03-16",
+    "eventType": "개발자 도구 공개",
+    "status": "개발자용",
+    "category": "보안/AI 인프라",
+    "feature": "OpenClaw 기반 에이전트를 통제된 환경에서 운영하도록 돕는 소프트웨어 스택.",
+    "skills": [
+      "에이전트-오케스트레이션",
+      "평가-가드레일"
+    ],
+    "url": "https://nvidianews.nvidia.com/news/nvidia-announces-nemoclaw",
+    "linkLabel": "공식 발표",
+    "linkNote": "일반 소비자 앱이 아닌 에이전트 운영 인프라.",
+    "impl": "기획 가설: 격리 실행환경 + 네트워크 정책 + 모델 라우팅",
+    "metric": "GTC 공개 보도: 에이전트 운영의 보안·통제 문제",
+    "addedAt": "2026-10-28",
+    "sources": [
+      {
+        "label": "TechRadar",
+        "date": "2026-03-16",
+        "url": "https://www.techradar.com/pro/this-is-as-big-of-a-deal-as-html-as-big-of-a-deal-as-linux-nvidia-nemoclaw-looks-to-make-openclaw-safer-and-more-effective-for-business-use",
+        "kind": "매체 보도"
+      }
+    ]
+  },
+  {
+    "name": "Copilot Cowork",
+    "company": "Microsoft",
+    "cohort": "해외",
+    "isNew": true,
+    "region": "글로벌",
+    "launchDate": "2026-03-09",
+    "eventType": "리서치 프리뷰",
+    "status": "6월 일반 공개",
+    "category": "생산성/오피스",
+    "feature": "Microsoft 365의 여러 앱에 걸쳐 긴 업무를 계획하고 수행하는 AI.",
+    "skills": [
+      "LLM-대화",
+      "에이전트-오케스트레이션",
+      "자동화-파이프라인"
+    ],
+    "url": "https://www.microsoft.com/en-us/copilot/blog/2026/06/16/copilot-cowork-is-now-generally-available/",
+    "linkLabel": "공식 제품 안내",
+    "linkNote": "3월 9일 최초 프리뷰; 6월 16일 일반 공개 발표.",
+    "impl": "기획 가설: 업무 계획 → 앱별 도구 실행 → 승인·진행 추적",
+    "metric": "공개 보도: 업무 앱 사이의 장기 실행을 조율",
+    "addedAt": "2026-10-28",
+    "sources": [
+      {
+        "label": "Axios",
+        "date": "2026-03-09",
+        "url": "https://www.axios.com/2026/03/09/microsoft-copilot-cowork-anthropic",
+        "kind": "매체 보도"
+      },
+      {
+        "label": "공식 발표·제품 설명",
+        "date": "",
+        "url": "https://www.microsoft.com/en-us/copilot/blog/2026/03/09/copilot-cowork-a-new-way-of-getting-work-done/",
+        "kind": "공식"
+      }
+    ]
+  },
+  {
+    "name": "Luma Agents",
+    "company": "Luma",
+    "cohort": "해외",
+    "isNew": true,
+    "region": "글로벌",
+    "launchDate": "2026-03-05",
+    "eventType": "제품 공개",
+    "status": "출시",
+    "category": "콘텐츠 생성",
+    "feature": "이미지·영상·음성 등 제작 작업을 조율하는 창작 에이전트.",
+    "skills": [
+      "에이전트-오케스트레이션",
+      "멀티모달-생성",
+      "자동화-파이프라인"
+    ],
+    "url": "https://lumalabs.ai/",
+    "linkLabel": "운영사 사이트",
+    "linkNote": "",
+    "impl": "기획 가설: 브리프 분석 → 생성 모델별 작업 배분 → 결과 비교·수정",
+    "metric": "창작 에이전트 출시 보도",
+    "addedAt": "2026-10-28",
+    "sources": [
+      {
+        "label": "TechCrunch",
+        "date": "2026-03-05",
+        "url": "https://techcrunch.com/2026/03/05/exclusive-luma-launches-creative-ai-agents-powered-by-its-new-unified-intelligence-models/",
+        "kind": "매체 보도"
+      },
+      {
+        "label": "공식 제품 가이드",
+        "date": "2026-03-09",
+        "kind": "공식",
+        "url": "https://lumalabs.ai/learning-center/articles/welcome-to-luma-agents"
+      }
+    ]
+  },
+  {
+    "name": "Notion Custom Agents",
+    "company": "Notion",
+    "cohort": "해외",
+    "isNew": true,
+    "region": "글로벌",
+    "launchDate": "2026-02-24",
+    "eventType": "신규 기능 공개",
+    "status": "제공 중",
+    "category": "생산성/오피스",
+    "feature": "조건이나 일정에 따라 반복 업무를 수행하도록 구성하는 맞춤형 에이전트.",
+    "skills": [
+      "LLM-대화",
+      "RAG-검색",
+      "에이전트-오케스트레이션",
+      "자동화-파이프라인"
+    ],
+    "url": "https://www.notion.com/en-gb/blog/introducing-custom-agents",
+    "linkLabel": "공식 제품 소개",
+    "linkNote": "Notion 전체의 신규 출시가 아닌 Custom Agents 제품 기능 기준.",
+    "impl": "기획 가설: 트리거 → 권한 내 지식 검색 → 작업 → 이력 검토",
+    "metric": "매체 사용기: 팀의 반복 업무를 맞춤 에이전트로 구성",
+    "addedAt": "2026-10-28",
+    "sources": [
+      {
+        "label": "Tom’s Guide·사용기",
+        "date": "2026-02-25",
+        "url": "https://www.tomsguide.com/ai/i-went-hands-on-with-notions-custom-agents-without-seeing-a-use-case-now-im-convinced-theyre-the-future",
+        "kind": "매체 보도"
+      },
+      {
+        "label": "공식 발표·제품 설명",
+        "date": "",
+        "url": "https://www.notion.com/en-gb/releases/2026-02-24",
+        "kind": "공식"
+      }
+    ]
+  },
+  {
+    "name": "Entire Checkpoints",
+    "company": "Entire",
+    "cohort": "해외",
+    "isNew": true,
+    "region": "글로벌",
+    "launchDate": "2026-02-10",
+    "eventType": "오픈소스 출시",
+    "status": "개발자용",
+    "category": "개발/코딩",
+    "feature": "AI 코딩 세션의 프롬프트와 맥락을 Git 변경 이력에 연결하는 도구.",
+    "skills": [
+      "자동화-파이프라인",
+      "평가-가드레일"
+    ],
+    "url": "https://entire.com/",
+    "linkLabel": "공식 사이트",
+    "linkNote": "생성형 모델 자체가 아니라 AI 개발 작업의 추적·검토 도구.",
+    "impl": "기획 가설: Git 훅 → 세션 기록 → 커밋별 맥락 연결 → 검토",
+    "metric": "개발 도구 공개 보도",
+    "addedAt": "2026-10-28",
+    "sources": [
+      {
+        "label": "TechCrunch",
+        "date": "2026-02-10",
+        "url": "https://techcrunch.com/2026/02/10/former-github-ceo-raises-record-60m-dev-tool-seed-round-at-300m-valuation/",
+        "kind": "매체 보도"
+      },
+      {
+        "label": "공식 발표·제품 설명",
+        "date": "",
+        "url": "https://entire.io/blog/hello-entire-world",
+        "kind": "공식"
+      }
+    ]
+  },
+  {
+    "name": "Project Genie",
+    "company": "Google DeepMind",
+    "cohort": "해외",
+    "isNew": true,
+    "region": "글로벌",
+    "launchDate": "2026-01-29",
+    "eventType": "연구 프로토타입 공개",
+    "status": "실험·이용 제한",
+    "category": "엔터테인먼트/소셜",
+    "feature": "텍스트와 이미지로 탐험 가능한 가상 세계를 만들고 체험하는 웹 프로토타입.",
+    "skills": [
+      "멀티모달-생성",
+      "멀티모달-이해"
+    ],
+    "url": "https://blog.google/innovation-and-ai/models-and-research/google-deepmind/project-genie/",
+    "linkLabel": "공식 발표",
+    "linkNote": "Genie 3 모델은 2025년; 2026년 공개된 별도 웹 경험 기준. 공개 당시 미국 Ultra 성인 이용자 대상.",
+    "impl": "기획 가설: 장면 조건 생성 → 행동 입력 → 다음 장면 생성",
+    "metric": "세계 생성 프로토타입 소개 보도",
+    "addedAt": "2026-10-28",
+    "sources": [
+      {
+        "label": "Creative Bloq",
+        "date": "",
+        "url": "https://www.creativebloq.com/3d/video-game-design/can-googles-project-genie-really-make-mario-and-zelda-games-from-text-prompts",
+        "kind": "매체 보도"
+      }
+    ]
+  },
+  {
+    "name": "에이전트팟 (AgentPod)",
+    "company": "라이브데이터",
+    "cohort": "국내",
+    "isNew": true,
+    "region": "국내",
+    "launchDate": "2026-01-14",
+    "eventType": "출시 발표",
+    "status": "출시",
+    "category": "생산성/오피스",
+    "feature": "여러 전문 AI 에이전트를 하나의 포털에서 선택해 사용하는 서비스.",
+    "skills": [
+      "LLM-대화",
+      "에이전트-오케스트레이션",
+      "자동화-파이프라인"
+    ],
+    "url": "https://agentpod-v2.laivdata.com/",
+    "linkLabel": "공식 사이트",
+    "linkNote": "",
+    "impl": "기획 가설: 공통 로그인·크레딧 결제와 업무별 에이전트 라우팅",
+    "metric": "출시 보도: 전문 에이전트의 통합 이용 경험",
+    "addedAt": "2026-10-28",
+    "sources": [
+      {
+        "label": "한국스타트업신문",
+        "date": "2026-01-14",
+        "url": "https://www.kspost.biz/ko-kr/articles/2203",
+        "kind": "매체 보도"
+      }
+    ]
+  },
+  {
+    "name": "Slackbot AI 에이전트",
+    "company": "Slack / Salesforce",
+    "cohort": "해외",
+    "isNew": true,
+    "region": "글로벌",
+    "launchDate": "2026-01-13",
+    "eventType": "새 AI 버전 일반 공개",
+    "status": "요금제별 제공",
+    "category": "생산성/오피스",
+    "feature": "업무 대화와 문서 맥락을 바탕으로 검색·작성·준비를 돕는 개인 업무 에이전트.",
+    "skills": [
+      "LLM-대화",
+      "RAG-검색",
+      "에이전트-오케스트레이션"
+    ],
+    "url": "https://slack.com/blog/news/slackbot-context-aware-ai-agent-for-work",
+    "linkLabel": "공식 제품 소개",
+    "linkNote": "기존 알림 봇의 창립 연도가 아닌, 2026년 AI 에이전트 제품 공개를 수집. 기존 목록의 Agentforce와 별도 제품.",
+    "impl": "기획 가설: 권한 기반 대화·문서 검색 + 개인 업무 문맥 + 실행 도구",
+    "metric": "새 AI 에이전트 버전 공개 보도",
+    "addedAt": "2026-10-28",
+    "sources": [
+      {
+        "label": "TechCrunch",
+        "date": "2026-01-13",
+        "url": "https://techcrunch.com/2026/01/13/slackbot-is-an-ai-agent-now/",
+        "kind": "매체 보도"
+      },
+      {
+        "label": "공식 발표·제품 설명",
+        "date": "",
+        "url": "https://www.salesforce.com/news/stories/slackbot-personal-agent-work/",
+        "kind": "공식"
+      }
+    ]
+  },
+  {
+    "name": "아테나 (Athena)",
+    "company": "비즈니스캔버스",
+    "cohort": "국내",
+    "isNew": true,
+    "region": "국내",
+    "launchDate": "2026-01",
+    "eventType": "서비스 도입",
+    "status": "출시",
+    "category": "생산성/오피스",
+    "feature": "해외 잠재 고객과 구매 결정권자를 분석하고 영업 전문가와 함께 미팅 연결을 지원.",
+    "skills": [
+      "RAG-검색",
+      "에이전트-오케스트레이션",
+      "자동화-파이프라인"
+    ],
+    "url": "https://www.recatch.cc/ko",
+    "linkLabel": "공식 사이트",
+    "linkNote": "인터뷰상 1월 도입, 10월 2일 정식 출시 보도. 정확한 최초 공개일 미확인.",
+    "impl": "기획 가설: 기업 변화 신호 수집 → 타깃 우선순위 → 전문가 검토 → 미팅 관리",
+    "metric": "대표 인터뷰와 10월 정식 출시 보도: AI 분석에 영업 실행을 결합",
+    "addedAt": "2026-10-28",
+    "sources": [
+      {
+        "label": "디지털투데이",
+        "date": "2026-09-08",
+        "url": "https://www.digitaltoday.co.kr/en/view/101175/marketing-ai-last-mile-k-export-helper-businesscanvas",
+        "kind": "매체 보도"
+      },
+      {
+        "label": "벤처스퀘어 · 정식 출시 보도",
+        "date": "2026-10-02",
+        "url": "https://www.venturesquare.net/1117684/",
+        "kind": "매체 보도"
+      }
+    ]
+  }
+];
+const services = [...newServices, ...originalServices];
+
+/* ============ STATE & HELPERS ============ */
+const state = {cohort:"new",search:"",region:"전체",category:"전체",skills:new Set(),view:"card"};
+
+function escapeHTML(value){return String(value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function serviceLink(s,label,cls='service-link'){
+ return `<a class="${cls}" href="${escapeHTML(s.url)}" target="_blank" rel="noopener noreferrer" title="${escapeHTML(s.name+' · '+s.linkLabel+' · 새 탭에서 열기')}">${escapeHTML(label)} <span aria-hidden="true">↗</span></a>`;
+}
+function serviceWebsite(s){return `<div class="service-website">${serviceLink(s,s.linkLabel)}<span class="link-domain">${escapeHTML(new URL(s.url).hostname)}</span>${s.linkNote?`<small class="link-note">${escapeHTML(s.linkNote)}</small>`:''}</div>`;}
+
+const COHORTS=[['all','전체 92'],['new','NEW 전체 40'],['domestic','NEW 국내 20'],['overseas','NEW 해외 20'],['original','기존 자료 52']];
+function newMeta(s){return s.isNew?`<div class="new-details"><strong>NEW ${escapeHTML(s.cohort)} · ${escapeHTML(s.launchDate)}</strong><br>${escapeHTML(s.eventType)} <span class="status-tag">${escapeHTML(s.status)}</span></div>`:'';}
+function evidenceHTML(s){return s.isNew?`<details class="evidence"><summary>출처 ${s.sources.length}개 · 근거 확인</summary>${s.sources.map(x=>`<a href="${escapeHTML(x.url)}" target="_blank" rel="noopener noreferrer">${escapeHTML(x.label)} · ${escapeHTML(x.kind)}${x.date?' · '+escapeHTML(x.date):''} ↗</a>`).join('')}<small>확인일 ${s.addedAt} · 구현 방식은 기획 가설</small></details>`:'';}
+
+function referenceLink(name){
+ const aliases={'스픽':'스픽 (Speak)','리드레이':'리드레이 (Readray)','슈퍼로이어':'로앤컴퍼니 슈퍼로이어','WorkBuddy':'Tencent WorkBuddy','Agentforce':'Salesforce Agentforce','Ant Afu':'蚂蚁阿福 (Ant Afu / AQ)'};
+ const s=services.find(s=>s.name===(aliases[name]||name))||services.find(s=>s.name.includes(name));
+ return s?serviceLink(s,name,'arch-service-tag reference-link'):`<span class="arch-service-tag">${escapeHTML(name)}</span>`;
+}
+function skillChip(sk){return `<span class="skill-chip" style="--c:${SKILL_COLORS[sk]}">${sk}</span>`;}
+
+/* ============ RENDER FILTERS ============ */
+function renderFilters(){
+  const cc=document.getElementById('cohortChips');
+  cc.innerHTML=COHORTS.map(([id,label])=>`<button class="chip ${state.cohort===id?'active':''}" data-cohort="${id}">${label}</button>`).join('');
+  cc.addEventListener('click',e=>{const b=e.target.closest('[data-cohort]');if(!b)return;state.cohort=b.dataset.cohort;cc.querySelectorAll('button').forEach(x=>x.classList.toggle('active',x===b));renderServices();});
+  const rc = document.getElementById('regionChips');
+  rc.innerHTML = REGIONS.map(r=>`<button class="chip ${r===state.region?'active':''}" data-region="${r}">${r}</button>`).join('');
+  rc.addEventListener('click', e=>{
+    const btn = e.target.closest('[data-region]'); if(!btn) return;
+    state.region = btn.dataset.region;
+    rc.querySelectorAll('.chip').forEach(c=>c.classList.toggle('active', c===btn));
+    renderServices();
+  });
+
+  const cat = document.getElementById('categorySelect');
+  cat.innerHTML = CATEGORIES.map(c=>`<option value="${c}">${c}</option>`).join('');
+  cat.addEventListener('change', e=>{ state.category = e.target.value; renderServices(); });
+
+  const sc = document.getElementById('skillChips');
+  sc.innerHTML = SKILLS.map(sk=>`<button class="chip skill-filter" data-skill="${sk}" style="--sc:${SKILL_COLORS[sk]}">${sk}</button>`).join('');
+  sc.addEventListener('click', e=>{
+    const btn = e.target.closest('[data-skill]'); if(!btn) return;
+    const sk = btn.dataset.skill;
+    if(state.skills.has(sk)) state.skills.delete(sk); else state.skills.add(sk);
+    btn.classList.toggle('active');
+    renderServices();
+  });
+
+  document.getElementById('searchInput').addEventListener('input', e=>{
+    state.search = e.target.value; renderServices();
+  });
+
+  document.querySelectorAll('.view-toggle button').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      state.view = btn.dataset.view;
+      document.querySelectorAll('.view-toggle button').forEach(b=>b.classList.toggle('active', b===btn));
+      renderServices();
+    });
+  });
+}
+
+/* ============ RENDER SERVICES ============ */
+function getFilteredServices(){ return services.filter(s=>{
+    if(state.cohort==='new'&&!s.isNew)return false;
+    if(state.cohort==='domestic'&&(!s.isNew||s.cohort!=='국내'))return false;
+    if(state.cohort==='overseas'&&(!s.isNew||s.cohort!=='해외'))return false;
+    if(state.cohort==='original'&&s.isNew)return false;
+    if(state.region !== "전체" && s.region !== state.region) return false;
+    if(state.category !== "전체" && s.category !== state.category) return false;
+    for(const sk of state.skills) if(!s.skills.includes(sk)) return false;
+    if(state.search){
+      const q = state.search.trim().toLowerCase();
+      const hay = (s.name+" "+(s.company||"")+" "+(s.launchDate||"")+" "+(s.status||"")+" "+s.feature+" "+s.impl+" "+s.metric+" "+s.category+" "+s.skills.join(" ")).toLowerCase();
+      if(!hay.includes(q)) return false;
+    }
+    return true;
+  });
+
+}
+
+function renderServices(){
+  const filtered = getFilteredServices();
+
+
+  document.getElementById('resultCount').textContent = `${filtered.length} / ${services.length} 서비스`;
+
+  const grid = document.getElementById('serviceGrid');
+  const tableWrap = document.getElementById('serviceTableWrap');
+  const empty = document.getElementById('emptyState');
+
+  syncPressed();
+  if(filtered.length === 0){
+    grid.innerHTML = '';
+    tableWrap.classList.add('hidden');
+    empty.classList.remove('hidden');
+    return;
+  }
+  empty.classList.add('hidden');
+
+  if(state.view === 'card'){
+    grid.classList.remove('hidden');
+    tableWrap.classList.add('hidden');
+    grid.innerHTML = filtered.map(s=>{
+      const rc = REGION_COLORS[s.region];
+      return `<article class="service-card" style="--accent:${rc}">
+        <div class="card-top">
+          <span class="region-badge" style="--rc:${rc}">${s.region}</span>
+          <span class="cat-label">${s.isNew?'<span class="new-badge">NEW 2026</span>':''}${s.category}</span>
+        </div>
+        <h3>${serviceLink(s,s.name,"service-name-link")}</h3>
+        ${s.company?`<div class="new-company">${escapeHTML(s.company)}</div>`:''}
+        ${newMeta(s)}${serviceWebsite(s)}
+        <p class="feature">${s.feature}</p>
+        <div class="skill-row">${s.skills.map(skillChip).join('')}</div>
+        <div class="card-meta">
+          <div class="meta-line"><span class="meta-key">구현 가설</span><span class="meta-val">${s.impl}</span></div>
+          <div class="meta-line"><span class="meta-key">${s.isNew?'주목 근거':'미검증 성과'}</span><span class="meta-val">${s.metric}</span></div>
+        </div>
+        ${evidenceHTML(s)}
+      </article>`;
+    }).join('');
+  } else {
+    grid.classList.add('hidden');
+    tableWrap.classList.remove('hidden');
+    document.getElementById('serviceTableBody').innerHTML = filtered.map(s=>{
+      const rc = REGION_COLORS[s.region];
+      return `<tr>
+        <td>${s.isNew?'<span class="new-badge">NEW 2026</span>':''}<strong>${serviceLink(s,s.name,"service-name-link")}</strong>${s.company?`<div class="new-company">${escapeHTML(s.company)}</div>`:''}${newMeta(s)}${serviceWebsite(s)}</td>
+        <td><span class="region-badge" style="--rc:${rc}">${s.region}</span></td>
+        <td>${s.category}</td>
+        <td>${s.feature}</td>
+        <td>${s.skills.map(skillChip).join('')}</td>
+        <td>${s.impl}</td>
+        <td><small>${s.isNew?'주목 근거':'미검증 원문 주장'}</small><br>${s.metric}${evidenceHTML(s)}</td>
+      </tr>`;
+    }).join('');
+  }
+}
+
+/* ============ RENDER ARCHETYPES ============ */
+function renderArchetypes(){
+  document.getElementById('archetypeGrid').innerHTML = archetypes.map(a=>`
+    <article class="archetype-card" style="--accent:${a.color}">
+      <div class="archetype-head">
+        <div class="archetype-id">${a.id}</div>
+        <div>
+          <h3>${a.name}</h3>
+          <div class="tagline">${a.tagline}</div>
+        </div>
+      </div>
+      <div class="arch-section">
+        <div class="arch-label">CORE SKILLS</div>
+        <div class="arch-skills">${a.skills.map(skillChip).join('')}${a.optional.map(sk=>`<span class="skill-chip" style="--c:${SKILL_COLORS[sk]};opacity:.55">${sk}</span>`).join('')}</div>
+      </div>
+      <div class="arch-section">
+        <div class="arch-label">REPRESENTATIVE SERVICES</div>
+        <div class="arch-services">${a.examples.map(referenceLink).join('')}</div>
+      </div>
+      <div class="arch-section">
+        <div class="arch-label">MVP SCOPE</div>
+        <ul class="arch-list">${a.mvp.map(m=>`<li>${m}</li>`).join('')}</ul>
+      </div>
+      <div class="arch-footer">
+        <span class="difficulty">프로토타입 난이도</span>
+        <span class="diff-badge diff-${a.difficulty}">${a.difficulty}</span>
+      </div>
+    </article>
+  `).join('');
+}
+
+/* ============ RENDER SKILL CATALOG ============ */
+function renderSkillCatalog(){
+  document.getElementById('skillGrid').innerHTML = skillCatalog.map(s=>`
+    <div class="skill-card" style="--accent:${s.color}">
+      <h3>${s.name}</h3>
+      <div class="sc-row"><span class="sc-label">구현 방식</span>${s.impl}</div>
+      <div class="sc-row"><span class="sc-label">최소 스택</span>${s.stack}</div>
+      <div class="sc-row"><span class="sc-label">참조 서비스</span>${s.refs.map(referenceLink).join(' ')}</div>
+      <div class="arch-footer" style="margin-top:10px">
+        <span class="difficulty">프로토타입</span>
+        <span class="diff-badge diff-${s.difficulty}">${s.difficulty}</span>
+      </div>
+    </div>
+  `).join('');
+}
+
+/* ============ RENDER IDEAS ============ */
+function renderIdeas(){
+  document.getElementById('ideaGrid').innerHTML = ideas.map((idea,i)=>`
+    <article class="idea-card" style="--accent:${idea.color}">
+      <div class="idea-num">IDEA ${String(i+1).padStart(2,'0')} · ${idea.archetype}</div>
+      <h3>${idea.title}</h3>
+      <p class="idea-desc">${idea.desc}</p>
+      <div class="idea-meta">
+        <div class="idea-meta-row"><span class="idea-meta-key">SKILLS</span><div class="arch-skills">${idea.skills.map(skillChip).join('')}</div></div>
+        <div class="idea-meta-row"><span class="idea-meta-key">REF</span><div class="arch-services">${idea.refs.map(referenceLink).join('')}</div></div>
+        <div class="idea-meta-row"><span class="idea-meta-key">MVP</span><div style="color:var(--text-dim)">${idea.mvp}</div></div>
+      </div>
+    </article>
+  `).join('');
+}
+
+/* ============ SKILL BUILDER ============ */
+function renderBuilder(){
+  const el = document.getElementById('builderSkills');
+  el.innerHTML = SKILLS.map(sk=>`<button class="builder-skill-btn" data-skill="${sk}" style="--c:${SKILL_COLORS[sk]}"><span class="dot"></span>${sk}</button>`).join('');
+  el.addEventListener('click', e=>{
+    const btn = e.target.closest('[data-skill]'); if(!btn) return;
+    btn.classList.toggle('active');
+    syncPressed();
+    updateBuilderResult();
+  });
+}
+
+function updateBuilderResult(){
+  const active = [...document.querySelectorAll('.builder-skill-btn.active')].map(b=>b.dataset.skill);
+  const result = document.getElementById('builderResult');
+  if(active.length === 0){
+    result.innerHTML = `<div style="color:var(--text-faint);font-size:13px">스킬을 선택하면 매칭되는 서비스와 아키타입을 추천합니다.</div>`;
+    return;
+  }
+  const matching = services.filter(s=>active.every(sk=>s.skills.includes(sk)));
+  let best = null, bestScore = -Infinity;
+  archetypes.forEach(a=>{
+    const overlap = a.skills.filter(sk=>active.includes(sk)).length;
+    const score = overlap / new Set([...a.skills,...active]).size;
+    if(score > bestScore){ bestScore = score; best = a; }
+  });
+  result.innerHTML = `
+    <h4>SKILL COMBINATION RESULT</h4>
+    <div style="font-size:13px;color:var(--text-dim);margin-bottom:12px">
+      선택한 <strong style="color:var(--text)">${active.length}개</strong> 스킬을 <strong style="color:var(--text)">모두</strong> 포함하는 서비스: <strong style="color:var(--cyan)">${matching.length}개</strong>
+    </div>
+    ${matching.length ? `<div class="arch-services" style="margin-bottom:16px">${matching.map(s=>serviceLink(s,s.name,"arch-service-tag reference-link")).join('')}</div>` : `<div style="font-size:12px;color:var(--text-faint);margin-bottom:16px">— 정확히 일치하는 서비스가 없습니다. 조합을 조정해 보세요.</div>`}
+    <h4 style="margin-top:16px">가장 가까운 유형 · 핵심 스킬 집합 유사도 ${Math.round(bestScore*100)}%</h4>
+    <div style="display:flex;align-items:center;gap:12px;margin-top:10px;background:var(--surface-2);padding:12px;border-radius:8px;border:1px solid var(--border)">
+      <div class="archetype-id" style="--accent:${best.color}">${best.id}</div>
+      <div style="flex:1">
+        <strong style="color:var(--text);font-size:14px">${best.name}</strong>
+        <div style="font-size:11px;color:var(--text-faint)">${best.tagline}</div>
+      </div>
+      <span class="diff-badge diff-${best.difficulty}">${best.difficulty}</span>
+    </div>
+    <div style="font-size:12px;color:var(--text-dim);margin-top:12px;line-height:1.8">
+      ${best.mvp.slice(0,3).map(m=>`▸ ${m}`).join('<br>')}
+    </div>
+  `;
+}
+
+/* ============ INIT ============ */
+document.getElementById('statServices').textContent = services.length;
+renderFilters();
+renderServices();
+renderArchetypes();
+renderSkillCatalog();
+renderIdeas();
+renderBuilder();
+
+function syncPressed(){
+ document.querySelectorAll('.chip[data-cohort],.chip[data-region],.skill-filter,.view-toggle button,.builder-skill-btn').forEach(b=>b.setAttribute('aria-pressed',String(b.classList.contains('active'))));
+}
+document.getElementById('resetFilters').onclick=()=>{
+ state.cohort='all';document.querySelectorAll('[data-cohort]').forEach(b=>b.classList.toggle('active',b.dataset.cohort==='all'));
+ state.search='';state.region='전체';state.category='전체';state.skills.clear();
+ document.getElementById('searchInput').value='';document.getElementById('categorySelect').value='전체';
+ document.querySelectorAll('[data-region]').forEach(b=>b.classList.toggle('active',b.dataset.region==='전체'));
+ document.querySelectorAll('.skill-filter').forEach(b=>b.classList.remove('active'));renderServices();
+};
+document.getElementById('exportCsv').onclick=()=>{
+ const rows=[['서비스','업체','수집 구분','지역','카테고리','특징','스킬(기획 해석)','구현 가설','주목 근거 또는 미검증 성과','공개 시점','공개 유형','자료상 상태','사이트 URL','링크 유형','링크 메모','출처','확인일'],...getFilteredServices().map(s=>[s.name,s.company||'',s.isNew?'NEW '+s.cohort:'기존 자료',s.region,s.category,s.feature,s.skills.join(' / '),s.impl,s.metric,s.launchDate||'',s.eventType||'',s.status||'',s.url,s.linkLabel,s.linkNote,(s.sources||[]).map(x=>`${x.label} | ${x.kind} | ${x.date} | ${x.url}`).join(' ; '),s.addedAt||'원문 미제공'])];
+ const csv='\uFEFF'+rows.map(row=>row.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',')).join('\r\n');
+ const url=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));const a=document.createElement('a');a.href=url;a.download='AI서비스_필터결과.csv';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
+};
+syncPressed();
+
+</script>
+</body>
+</html>
